@@ -111,6 +111,31 @@ namespace Match3Solver
             {
                 this.wasChanged = false;
             }
+
+            public Boolean hasScore()
+            {
+                return (this.BrokenHeart + this.Heart + this.Stamina + this.Sentiment + this.Blue + this.Red + this.Green + this.Gold + this.Bell > 0);
+            }
+        }
+
+        public struct Movement
+        {
+            public int xPos;
+            public int yPos;
+            public Boolean isVertical;
+            public int amount;
+            public Score score;
+            public int boardHash;
+
+            public Movement(int xPos, int yPos, Boolean isVertical, int amount, Score score, int boardhash)
+            {
+                this.xPos = xPos;
+                this.yPos = yPos;
+                this.isVertical = isVertical;
+                this.amount = amount;
+                this.score = score;
+                this.boardHash = boardhash;
+            }
         }
         
         int width = 9;
@@ -133,10 +158,92 @@ namespace Match3Solver
             initBoardDisplay();
             //board = moveHorizontal(3, 2, 6);
             //board = moveVertical(2, 3, -2);
-            board = moveVertical(4, 6, 1);
-            Score score = new Score(0);
-            score = evalBoard(score, board);
-            drawBoard(board);
+            //board = moveVertical(4, 6, 1);
+            //Score score = new Score(0);
+            //score = evalBoard(score, board);
+            //drawBoard(board);
+            loopBoard(board);
+        }
+
+        private List<Movement> loopBoard(int[][] board2Test)
+        {
+            List<Movement> returnThis = new List<Movement>();
+            int y = 0;
+            int x = 0;
+            //board2TestCopy = checkMatch(index / width, index % width, board2TestCopy[index / width][index % width] % 10, board2TestCopy);
+            //public Score evalBoard(Score score, int[][] board2Test)
+            while(y < length)
+            {
+                x = 0;
+                while(x < width)
+                {
+                    int offset = 1;
+                    // HORIZONTAL
+                    // MOVE LEFT
+                    while(x - offset > -1)
+                    {
+                        // DEEP COPY
+                        int[][] board2TestCopy = Array.ConvertAll(board2Test, a => (int[])a.Clone());
+
+                        // MOVE
+                        board2TestCopy = moveHorizontal(y, x, -1 * offset, board2TestCopy);
+                        int boardHash = getBoardHash(board2TestCopy);
+                        
+                        // ONLY SAVE IF THERE WAS A MATCH/SCORE
+                        Score result = evalBoard(new Score(0), board2TestCopy);
+                        if (result.hasScore())
+                        {
+                            // CHECK IF BOARD PATTERN ALREADY EXIST. REDUCE DUPLICATE
+                            Movement testExist = returnThis.SingleOrDefault(s => s.boardHash == boardHash);
+                            if(!testExist.score.hasScore())
+                            {
+                                returnThis.Add(new Movement(x, y, false, -1 * offset, result, boardHash));
+                            }
+                        }
+                        offset++;
+                    }
+                    // MOVE RIGHT
+                    offset = 1;
+                    while(x + offset < width)
+                    {
+                        // DEEP COPY
+                        int[][] board2TestCopy = Array.ConvertAll(board2Test, a => (int[])a.Clone());
+
+                        // MOVE
+                        board2TestCopy = moveHorizontal(y, x, offset, board2TestCopy);
+                        int boardHash = getBoardHash(board2TestCopy);
+
+                        // ONLY SAVE IF THERE WAS A MATCH/SCORE
+                        Score result = evalBoard(new Score(0), board2TestCopy);
+                        if (result.hasScore())
+                        {
+                            // CHECK IF BOARD PATTERN ALREADY EXIST. REDUCE DUPLICATE
+                            Movement testExist = returnThis.SingleOrDefault(s => s.boardHash == boardHash);
+                            if (!testExist.score.hasScore())
+                            {
+                                returnThis.Add(new Movement(x, y, false, offset, result, boardHash));
+                            }
+                        }
+                        offset++;
+                    }
+
+                    // VERTICAL
+
+                    x++;
+                }
+                y++;
+            }
+
+            return returnThis;
+        }
+
+        private int getBoardHash(int[][] board2TestCopy)
+        {
+            int[] flattenedBoard = board2TestCopy.SelectMany(elem => elem).ToArray();
+            String result = string.Join(string.Empty, flattenedBoard);
+            return result.GetHashCode();
+            //int boardHash = ((System.Collections.IStructuralEquatable)flattenedBoard).GetHashCode(EqualityComparer<int>.Default);
+            //throw new NotImplementedException();
         }
 
         private void drawBoard(int[][] board)
@@ -196,21 +303,23 @@ namespace Match3Solver
             return rect;
         }
 
-        public int[][] moveHorizontal(int yPos, int xPos, int amount)
+        public int[][] moveHorizontal(int yPos, int xPos, int amount, int[][] board2Test)
         {
+            // DEEP COPY
+            int[][] board2TestCopy = Array.ConvertAll(board2Test, a => (int[])a.Clone());
             int newX = xPos + amount;
             if (amount == 0)
             {
-                return board;
+                return board2TestCopy;
             }
             else if (newX > width || newX < 0)
             {
                 Console.WriteLine("Out of Bounds moving entity Horizontally: [" + yPos + "," + xPos + " " + amount + " positions");
-                return board;
+                return board2TestCopy;
             }
             else
             {
-                int[] line = board[yPos];
+                int[] line = board2TestCopy[yPos];
                 int value = line[xPos];
 
                 // CHECK DIRECTION, POSITIVE MEANS GOING RIGHT
@@ -233,27 +342,29 @@ namespace Match3Solver
                     }
                 }
                 line[xPos + amount] = value;
-                board[yPos] = line;
+                board2TestCopy[yPos] = line;
             }
-            return board;
+            return board2TestCopy;
         }
 
-        public int[][] moveVertical(int yPos, int xPos, int amount)
+        public int[][] moveVertical(int yPos, int xPos, int amount, int[][] board2Test)
         {
+            // DEEP COPY
+            int[][] board2TestCopy = Array.ConvertAll(board2Test, a => (int[])a.Clone());
             int newY = yPos + amount;
             if(amount == 0)
             {
-                return board;
+                return board2TestCopy;
             }
             else if(newY > length || newY < 0)
             {
                 Console.WriteLine("Out of Bounds moving entity Vertically: [" + yPos + "," + xPos + " " + amount + " positions");
-                return board;
+                return board2TestCopy;
             }
             else
             {
-                int[][] boardCopy = board;
-                int value = board[yPos][xPos];
+                int[][] boardCopy = board2TestCopy;
+                int value = board2TestCopy[yPos][xPos];
 
                 // CHECK DIRECTION, POSITIVE MEANS GOING DOWN
                 if (amount > 0)
@@ -276,20 +387,21 @@ namespace Match3Solver
                 }
 
                 boardCopy[yPos + amount][xPos] = value;
-                board = boardCopy;
+                board2TestCopy = boardCopy;
             }
-            return board;
+            return board2TestCopy;
         }
 
         public Score evalBoard(Score score, int[][] board2Test)
         {
-            int[][] board2TestCopy = board2Test;
+            // DEEP COPY
+            int[][] board2TestCopy = Array.ConvertAll(board2Test, a => (int[])a.Clone());
             int sum = 0;
             int index = 0;
 
             while(index < 63)
             {
-                board2TestCopy = checkMatch(index / width, index % width, board2Test[index / width][index % width] % 10, board2Test);
+                board2TestCopy = checkMatch(index / width, index % width, board2TestCopy[index / width][index % width] % 10, board2TestCopy);
                 index++;
             }
             score = extractScore(score, board2TestCopy);
