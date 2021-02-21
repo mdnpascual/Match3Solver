@@ -91,18 +91,25 @@ namespace Match3Solver
         {
             InitializeComponent();
             capture = new GameCapture();
-            solver = new SolverUtils(length, width);
+            solver = new SolverUtils(length, width, boardDisplay);
 
-            board[0] = new int[] { 6, 7, 4, 1, 7, 7, 6, 4, 1 };
-            board[1] = new int[] { 2, 4, 3, 1, 4, 4, 5, 2, 3 };
-            board[2] = new int[] { 2, 2, 3, 7, 4, 7, 1, 0, 5 };
-            board[3] = new int[] { 5, 0, 5, 6, 1, 6, 1, 0, 6 };
-            board[4] = new int[] { 6, 0, 0, 2, 3, 6, 5, 6, 5 };
-            board[5] = new int[] { 3, 5, 3, 1, 1, 3, 1, 3, 5 };
-            board[6] = new int[] { 3, 6, 2, 3, 8, 4, 5, 1, 4 };
+            //board[0] = new int[] { 6, 7, 4, 1, 7, 7, 6, 4, 1 };
+            //board[1] = new int[] { 2, 4, 3, 1, 4, 4, 5, 2, 3 };
+            //board[2] = new int[] { 2, 2, 3, 7, 4, 7, 1, 0, 5 };
+            //board[3] = new int[] { 5, 0, 5, 6, 1, 6, 1, 0, 6 };
+            //board[4] = new int[] { 6, 0, 0, 2, 3, 6, 5, 6, 5 };
+            //board[5] = new int[] { 3, 5, 3, 1, 1, 3, 1, 3, 5 };
+            //board[6] = new int[] { 3, 6, 2, 3, 8, 4, 5, 1, 4 };
+            board[0] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            board[1] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            board[2] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            board[3] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            board[4] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            board[5] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            board[6] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             initBoardDisplay();
-            List<SolverInterface.Movement> results = solver.loopBoard(board);
-            updateResultView(results);
+            //List<SolverInterface.Movement> results = solver.loopBoard(board);
+            //updateResultView(results);
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -133,7 +140,12 @@ namespace Match3Solver
                                     huniePopWindow = findHuniePopWindow();
                                     break;
                                 case VK_C:
-                                    captureBoard(huniePopWindow);
+                                    //System.Drawing.Image newImage = System.Drawing.Image.FromFile("C:\\Users\\mdnpm\\Desktop\\4K.png");
+                                    //drawBoard(solver.parseImage(newImage));
+                                    board = solver.parseImage(captureBoard(huniePopWindow));
+                                    updateResultView(solver.loopBoard(board));
+                                    drawBoard(board);
+
                                     break;
                             }
                             handled = true;
@@ -173,7 +185,7 @@ namespace Match3Solver
             {
                 statusText.Foreground = new SolidColorBrush(Colors.Black);
                 statusText.Text = "Screenshot taken";
-                capture.CaptureWindowToFile(targetWindow, "C:\\Users\\mdnpm\\Desktop\\blah.png", ImageFormat.Png);
+                capture.CaptureWindowToFile(targetWindow, "C:\\Users\\mdnpm\\Desktop\\breh.png", ImageFormat.Png);
                 return capture.CaptureWindow(targetWindow);
             }
             else
@@ -187,6 +199,9 @@ namespace Match3Solver
 
         private void updateResultView(List<SolverInterface.Movement> results)
         {
+            resultListView.Items.Clear();
+            results.Clear();
+
             GridViewColumn Position = new GridViewColumn();
             Position.Header = "Pos(Y,X)";
             Position.DisplayMemberBinding = new Binding("Position");

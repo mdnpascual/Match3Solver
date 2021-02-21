@@ -1,19 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace Match3Solver
 {
     public class SolverUtils : SolverInterface
     {
+        
+        System.Windows.Media.Color[] rawColor = new System.Windows.Media.Color[] {
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF5F1282"), //0 - Broken heart
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FFF553B4"), //1 - Heart
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FFA3ABC3"), //2 - Stamina
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF51C1C6"), //3 - Sentiment
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF115CA8"), //4 - Blue
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FFE55949"), //5 - Red
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF8EB94A"), //6 - Green
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FFBF6D16"), //7 - Gold
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FFDDB842")  //8 - Bell
+        };
+
         int length;
         int width;
-        public SolverUtils(int length, int width)
+        System.Windows.Shapes.Rectangle[][] boardDisplay;
+        public SolverUtils(int length, int width, System.Windows.Shapes.Rectangle[][] boardDisplay)
         {
             this.length = length;
             this.width = width;
+            this.boardDisplay = boardDisplay;
         }
         public List<SolverInterface.Movement> loopBoard(int[][] board2Test)
         {
@@ -395,11 +413,79 @@ namespace Match3Solver
             return score;
         }
 
-        public int[][] parseImage(System.Drawing.Image img)
+        public int[][] parseImage(Image img)
         {
             int[][] board = new int[length][];
+            List<System.Windows.Media.Color> extractedColor = new List<System.Windows.Media.Color>();
+
+            using (Bitmap bmp = new Bitmap(img))
+            {
+                try
+                {
+                    int sizeWidth = bmp.Width;
+                    int sizeLength = bmp.Height;
+                    BitmapData bitmapData = bmp.LockBits(new Rectangle(0, 0, sizeWidth, sizeLength), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+
+                    int startX = (int)(sizeWidth * 0.3125);
+                    int startY = (int)(sizeLength * 0.1553);
+                    int offset = 180; // 180 FOR 4K
+
+                    int x = 0;
+                    int y = 0;
+                    while (y < length)
+                    {
+                        x = 0;
+                        board[y] = new int[width];
+                        startX = (int)(sizeWidth * 0.3125);
+                        while (x < width)
+                        {
+                            byte[] rgb = getPixel(startX, startY, sizeWidth, bitmapData);
+                            board[y][x] = Array.IndexOf(rawColor, GetClosestColor(rawColor, System.Windows.Media.Color.FromArgb((byte)255, rgb[0], rgb[1], rgb[2])));
+                            x++;
+                            startX += offset;
+                        }
+                        y++;
+                        startY += offset;
+                    }
+                    
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
 
             return board;
+        }
+
+        private static System.Windows.Media.Color GetClosestColor(System.Windows.Media.Color[] colorArray, System.Windows.Media.Color baseColor)
+        {
+            var colors = colorArray.Select(x => new { Value = x, Diff = GetDiffColor(x, baseColor) }).ToList();
+            var min = colors.Min(x => x.Diff);
+            return colors.Find(x => x.Diff == min).Value;
+        }
+
+        private static int GetDiffColor(System.Windows.Media.Color color, System.Windows.Media.Color baseColor)
+        {
+            int a = color.A - baseColor.A,
+                r = color.R - baseColor.R,
+                g = color.G - baseColor.G,
+                b = color.B - baseColor.B;
+            return a * a + r * r + g * g + b * b;
+        }
+
+        public byte[] getPixel(int x, int y, int maxWidth, BitmapData img)
+        {
+            int stride = maxWidth * 3;
+            int pixel = 3 * x + stride * y;
+            unsafe
+            {
+                byte* scan0 = (byte*)img.Scan0.ToPointer();
+                byte B = scan0[pixel + 0];
+                byte G = scan0[pixel + 1];
+                byte R = scan0[pixel + 2];
+                return new byte[] { R, G, B };
+            }
         }
 
     }
