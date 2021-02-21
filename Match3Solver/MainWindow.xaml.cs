@@ -135,7 +135,7 @@ namespace Match3Solver
             //board = moveVertical(2, 3, -2);
             board = moveVertical(4, 6, 1);
             Score score = new Score(0);
-            evalBoard(score, board);
+            score = evalBoard(score, board);
             drawBoard(board);
         }
 
@@ -281,7 +281,7 @@ namespace Match3Solver
             return board;
         }
 
-        public void evalBoard(Score score, int[][] board2Test)
+        public Score evalBoard(Score score, int[][] board2Test)
         {
             int[][] board2TestCopy = board2Test;
             int sum = 0;
@@ -295,10 +295,11 @@ namespace Match3Solver
             score = extractScore(score, board2TestCopy);
             if (score.wasChanged)
             {
-                gravityFall(board2TestCopy);
-                // RECURSE?
+                score.resetWasChanged();
+                board2TestCopy = gravityFall(board2TestCopy);
+                score = evalBoard(score, board2TestCopy);
             }
-            Console.WriteLine("halt");
+            return score;
         }
 
         private int[][] gravityFall(int[][] board2Test)
