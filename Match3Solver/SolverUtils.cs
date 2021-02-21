@@ -395,5 +395,12 @@ namespace Match3Solver
             return score;
         }
 
+        public int[][] parseImage(System.Drawing.Image img)
+        {
+            int[][] board = new int[length][];
+
+            return board;
+        }
+
     }
 }
