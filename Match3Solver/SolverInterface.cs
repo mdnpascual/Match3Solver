@@ -22,6 +22,8 @@ namespace Match3Solver
             public int Gold;
             public int Bell;
 
+            public int staminaCost;
+            public int chains;
             public Boolean wasChanged;
 
             public Score(int whyDoINeedThis)
@@ -36,6 +38,8 @@ namespace Match3Solver
                 this.Gold = 0;
                 this.Bell = 0;
                 wasChanged = false;
+                this.staminaCost = 0;
+                this.chains = 0;
             }
 
             public void addScoreFromValue(int value)

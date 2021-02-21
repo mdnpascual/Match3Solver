@@ -23,6 +23,8 @@ namespace Match3Solver
         public Boolean isVertical { set; get; }
         public int xPos { set; get; }
         public int yPos { set; get; }
+        public int StaminaCost { set; get; }
+        public int Chain { set; get; }
 
         public resultItem(SolverInterface.Movement input)
         {
@@ -41,6 +43,8 @@ namespace Match3Solver
             isVertical = input.isVertical;
             xPos = input.xPos;
             yPos = input.yPos;
+            StaminaCost = input.score.staminaCost;
+            Chain = input.score.chains;
         }
 
         private string getDirection(SolverInterface.Movement input)

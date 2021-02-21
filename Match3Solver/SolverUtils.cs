@@ -41,7 +41,7 @@ namespace Match3Solver
                         int boardHash = getBoardHash(board2TestCopy);
 
                         // ONLY SAVE IF THERE WAS A MATCH/SCORE
-                        SolverInterface.Score result = evalBoard(new SolverInterface.Score(0), board2TestCopy);
+                        SolverInterface.Score result = evalBoard(new SolverInterface.Score(0), board2TestCopy, true);
                         if (result.hasScore())
                         {
                             // CHECK IF BOARD PATTERN ALREADY EXIST. REDUCE DUPLICATE
@@ -65,7 +65,7 @@ namespace Match3Solver
                         int boardHash = getBoardHash(board2TestCopy);
 
                         // ONLY SAVE IF THERE WAS A MATCH/SCORE
-                        SolverInterface.Score result = evalBoard(new SolverInterface.Score(0), board2TestCopy);
+                        SolverInterface.Score result = evalBoard(new SolverInterface.Score(0), board2TestCopy, true);
                         if (result.hasScore())
                         {
                             // CHECK IF BOARD PATTERN ALREADY EXIST. REDUCE DUPLICATE
@@ -94,7 +94,7 @@ namespace Match3Solver
                         int boardHash = getBoardHash(board2TestCopy);
 
                         // ONLY SAVE IF THERE WAS A MATCH/SCORE
-                        SolverInterface.Score result = evalBoard(new SolverInterface.Score(0), board2TestCopy);
+                        SolverInterface.Score result = evalBoard(new SolverInterface.Score(0), board2TestCopy, true);
                         if (result.hasScore())
                         {
                             // CHECK IF BOARD PATTERN ALREADY EXIST. REDUCE DUPLICATE
@@ -119,7 +119,7 @@ namespace Match3Solver
                         int boardHash = getBoardHash(board2TestCopy);
 
                         // ONLY SAVE IF THERE WAS A MATCH/SCORE
-                        SolverInterface.Score result = evalBoard(new SolverInterface.Score(0), board2TestCopy);
+                        SolverInterface.Score result = evalBoard(new SolverInterface.Score(0), board2TestCopy, true);
                         if (result.hasScore())
                         {
                             // CHECK IF BOARD PATTERN ALREADY EXIST. REDUCE DUPLICATE
@@ -238,7 +238,7 @@ namespace Match3Solver
             return board2TestCopy;
         }
 
-        public SolverInterface.Score evalBoard(SolverInterface.Score score, int[][] board2Test)
+        public SolverInterface.Score evalBoard(SolverInterface.Score score, int[][] board2Test, Boolean initial)
         {
             // DEEP COPY
             int[][] board2TestCopy = Array.ConvertAll(board2Test, a => (int[])a.Clone());
@@ -250,12 +250,16 @@ namespace Match3Solver
                 board2TestCopy = checkMatch(index / width, index % width, board2TestCopy[index / width][index % width] % 10, board2TestCopy);
                 index++;
             }
-            score = extractScore(score, board2TestCopy);
+            score = extractScore(score, board2TestCopy, initial);
             if (score.wasChanged)
             {
+                if (!initial)
+                {
+                    score.chains++;
+                }
                 score.resetWasChanged();
                 board2TestCopy = gravityFall(board2TestCopy);
-                score = evalBoard(score, board2TestCopy);
+                score = evalBoard(score, board2TestCopy, false);
             }
             return score;
         }
@@ -323,7 +327,7 @@ namespace Match3Solver
 
         }
 
-        public SolverInterface.Score extractScore(SolverInterface.Score score, int[][] board2Test)
+        public SolverInterface.Score extractScore(SolverInterface.Score score, int[][] board2Test, Boolean initial)
         {
             int x = 0;
             int y = 0;
@@ -338,6 +342,10 @@ namespace Match3Solver
                     {
                         score.addScoreFromValue(board2Test[y][x]);
                         board2Test[y][x] = 9;
+                        if (initial)
+                        {
+                            score.staminaCost++;
+                        }
                     }
                     x++;
                 }

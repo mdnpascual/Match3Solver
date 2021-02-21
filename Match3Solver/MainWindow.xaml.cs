@@ -72,6 +72,12 @@ namespace Match3Solver
             GridViewColumn Amount = new GridViewColumn();
             Amount.Header = "Amt";
             Amount.DisplayMemberBinding = new Binding("Amount");
+            GridViewColumn Chain = new GridViewColumn();
+            Chain.Header = "Chain";
+            Chain.DisplayMemberBinding = new Binding("Chain");
+            GridViewColumn StaminaCost = new GridViewColumn();
+            StaminaCost.Header = "Cost";
+            StaminaCost.DisplayMemberBinding = new Binding("StaminaCost");
             GridViewColumn sHeart = new GridViewColumn();
             sHeart.Header = "SHeart";
             sHeart.DisplayMemberBinding = new Binding("sHeart");
@@ -102,6 +108,8 @@ namespace Match3Solver
 
             resultGridView.Columns.Add(Position);
             resultGridView.Columns.Add(Amount);
+            resultGridView.Columns.Add(Chain);
+            resultGridView.Columns.Add(StaminaCost);
             resultGridView.Columns.Add(sHeart);
             resultGridView.Columns.Add(sStam);
             resultGridView.Columns.Add(sSent);
