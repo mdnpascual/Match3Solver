@@ -5,8 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Match3Solver"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="894.978">
     <Grid x:Name="mainGrid">
-        
+        <ListView x:Name="resultListView" HorizontalAlignment="Left" Height="387" Margin="361,10,0,0" VerticalAlignment="Top" Width="515" SelectionChanged="resultListView_SelectionChanged">
+            <ListView.View>
+                <GridView x:Name="resultGridView">
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
     </Grid>
 </Window>

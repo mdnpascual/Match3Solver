@@ -18,6 +18,70 @@ namespace Match3Solver
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    
+    public class resultItem
+    {
+        public string Position { get; set; }
+        public int Amount { get; set; }
+        public string Direction { get; set; }
+        public int sHeart { get; set; }
+        public int sStam { get; set; }
+        public int sSent { get; set; }
+        public int sBlue { get; set; }
+        public int sRed { get; set; }
+        public int sGreen { get; set; }
+        public int sGold { get; set; }
+        public int sBell { get; set; }
+        public int sBHeart { get; set; }
+        public Boolean isVertical { set; get; }
+        public int xPos { set; get; }
+        public int yPos { set; get; }
+
+        public resultItem(MainWindow.Movement input)
+        {
+            Position = "[" + input.yPos + "," + input.xPos + "]";
+            Amount = input.amount;
+            Direction = getDirection(input);
+            sHeart = input.score.Heart;
+            sStam = input.score.Stamina;
+            sSent = input.score.Sentiment;
+            sBlue = input.score.Blue;
+            sRed = input.score.Red;
+            sGreen = input.score.Green;
+            sGold = input.score.Gold;
+            sBell = input.score.Bell;
+            sBHeart = input.score.BrokenHeart;
+            isVertical = input.isVertical;
+            xPos = input.xPos;
+            yPos = input.yPos;
+        }
+
+        private string getDirection(MainWindow.Movement input)
+        {
+            if(!input.isVertical && input.amount > 0)
+            {
+                return "⇒";
+            }
+            else if(!input.isVertical && input.amount < 0)
+            {
+                return "⇐";
+            }
+            else if (input.isVertical && input.amount > 0)
+            {
+                return "⇓";
+            }
+            else if (input.isVertical && input.amount < 0)
+            {
+                return "⇑";
+            }
+            return "?";
+        }
+
+        public override string ToString()
+        {
+            return Direction;
+        }
+    }
     public partial class MainWindow : Window
     {
         //0 - Broken heart
@@ -162,9 +226,64 @@ namespace Match3Solver
             //Score score = new Score(0);
             //score = evalBoard(score, board);
             //drawBoard(board);
-            loopBoard(board);
+            List<Movement> results = loopBoard(board);
+            updateResultView(results);
         }
 
+        private void updateResultView(List<Movement> results)
+        {
+            GridViewColumn Position = new GridViewColumn();
+            Position.Header = "Pos(Y,X)";
+            Position.DisplayMemberBinding = new Binding("Position");
+            GridViewColumn Amount = new GridViewColumn();
+            Amount.Header = "Amt";
+            Amount.DisplayMemberBinding = new Binding("Amount");
+            GridViewColumn sHeart = new GridViewColumn();
+            sHeart.Header = "SHeart";
+            sHeart.DisplayMemberBinding = new Binding("sHeart");
+            GridViewColumn sStam = new GridViewColumn();
+            sStam.Header = "SStam";
+            sStam.DisplayMemberBinding = new Binding("sStam");
+            GridViewColumn sSent = new GridViewColumn();
+            sSent.Header = "SSent";
+            sSent.DisplayMemberBinding = new Binding("sSent");
+            GridViewColumn sBlue = new GridViewColumn();
+            sBlue.Header = "SBlue";
+            sBlue.DisplayMemberBinding = new Binding("sBlue");
+            GridViewColumn sRed = new GridViewColumn();
+            sRed.Header = "SRed";
+            sRed.DisplayMemberBinding = new Binding("sRed");
+            GridViewColumn sGreen = new GridViewColumn();
+            sGreen.Header = "SGreen";
+            sGreen.DisplayMemberBinding = new Binding("sGreen");
+            GridViewColumn sGold = new GridViewColumn();
+            sGold.Header = "SGold";
+            sGold.DisplayMemberBinding = new Binding("sGold");
+            GridViewColumn sBell = new GridViewColumn();
+            sBell.Header = "SBell";
+            sBell.DisplayMemberBinding = new Binding("sBell");
+            GridViewColumn sBHeart = new GridViewColumn();
+            sBHeart.Header = "SBHeart";
+            sBHeart.DisplayMemberBinding = new Binding("sBHeart");
+
+            resultGridView.Columns.Add(Position);
+            resultGridView.Columns.Add(Amount);
+            resultGridView.Columns.Add(sHeart);
+            resultGridView.Columns.Add(sStam);
+            resultGridView.Columns.Add(sSent);
+            resultGridView.Columns.Add(sBlue);
+            resultGridView.Columns.Add(sRed);
+            resultGridView.Columns.Add(sGreen);
+            resultGridView.Columns.Add(sGold);
+            resultGridView.Columns.Add(sBell);
+            resultGridView.Columns.Add(sBHeart);
+
+            results.ForEach(result =>
+            {
+                resultListView.Items.Add(new resultItem(result));
+            });
+
+        }
         private List<Movement> loopBoard(int[][] board2Test)
         {
             List<Movement> returnThis = new List<Movement>();
@@ -177,10 +296,13 @@ namespace Match3Solver
                 x = 0;
                 while(x < width)
                 {
-                    int offset = 1;
+                    /////////////////////
                     // HORIZONTAL
+                    /////////////////////
+                    ///
                     // MOVE LEFT
-                    while(x - offset > -1)
+                    int offset = 1;
+                    while (x - offset > -1)
                     {
                         // DEEP COPY
                         int[][] board2TestCopy = Array.ConvertAll(board2Test, a => (int[])a.Clone());
@@ -227,7 +349,59 @@ namespace Match3Solver
                         offset++;
                     }
 
+                    /////////////////////
                     // VERTICAL
+                    /////////////////////
+
+                    // MOVE UP
+                    offset = 1;
+                    while (y - offset > -1)
+                    {
+                        // DEEP COPY
+                        int[][] board2TestCopy = Array.ConvertAll(board2Test, a => (int[])a.Clone());
+
+                        // MOVE
+                        board2TestCopy = moveVertical(y, x, -1 * offset, board2TestCopy);
+                        int boardHash = getBoardHash(board2TestCopy);
+
+                        // ONLY SAVE IF THERE WAS A MATCH/SCORE
+                        Score result = evalBoard(new Score(0), board2TestCopy);
+                        if (result.hasScore())
+                        {
+                            // CHECK IF BOARD PATTERN ALREADY EXIST. REDUCE DUPLICATE
+                            Movement testExist = returnThis.SingleOrDefault(s => s.boardHash == boardHash);
+                            if (!testExist.score.hasScore())
+                            {
+                                returnThis.Add(new Movement(x, y, true, -1 * offset, result, boardHash));
+                            }
+                        }
+                        offset++;
+                    }
+
+                    // MOVE DOWN
+                    offset = 1;
+                    while (y + offset < length)
+                    {
+                        // DEEP COPY
+                        int[][] board2TestCopy = Array.ConvertAll(board2Test, a => (int[])a.Clone());
+
+                        // MOVE
+                        board2TestCopy = moveVertical(y, x, offset, board2TestCopy);
+                        int boardHash = getBoardHash(board2TestCopy);
+
+                        // ONLY SAVE IF THERE WAS A MATCH/SCORE
+                        Score result = evalBoard(new Score(0), board2TestCopy);
+                        if (result.hasScore())
+                        {
+                            // CHECK IF BOARD PATTERN ALREADY EXIST. REDUCE DUPLICATE
+                            Movement testExist = returnThis.SingleOrDefault(s => s.boardHash == boardHash);
+                            if (!testExist.score.hasScore())
+                            {
+                                returnThis.Add(new Movement(x, y, true, offset, result, boardHash));
+                            }
+                        }
+                        offset++;
+                    }
 
                     x++;
                 }
@@ -498,6 +672,22 @@ namespace Match3Solver
                 y++;
             }
             return score;
+        }
+
+        private void resultListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // DEEP COPY
+            int[][] board2Test = Array.ConvertAll(board, a => (int[])a.Clone());
+            resultItem selectedItem = (resultItem)e.AddedItems[0];
+            if (selectedItem.isVertical)
+            {
+                board2Test = moveVertical(selectedItem.yPos, selectedItem.xPos, selectedItem.Amount, board2Test);
+            }
+            else
+            {
+                board2Test = moveHorizontal(selectedItem.yPos, selectedItem.xPos, selectedItem.Amount, board2Test);
+            }
+            drawBoard(board2Test);
         }
     }
 }
