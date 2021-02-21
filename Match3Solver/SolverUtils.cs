@@ -140,13 +140,16 @@ namespace Match3Solver
             return returnThis;
         }
 
+        /// <summary>
+        /// Gets HashCode by Flattening to 1D Array and Joining to a String of Ints.
+        /// </summary>
+        /// <param name="board2TestCopy"></param>
+        /// <returns></returns>
         private int getBoardHash(int[][] board2TestCopy)
         {
             int[] flattenedBoard = board2TestCopy.SelectMany(elem => elem).ToArray();
             String result = string.Join(string.Empty, flattenedBoard);
             return result.GetHashCode();
-            //int boardHash = ((System.Collections.IStructuralEquatable)flattenedBoard).GetHashCode(EqualityComparer<int>.Default);
-            //throw new NotImplementedException();
         }
 
         public int[][] moveHorizontal(int yPos, int xPos, int amount, int[][] board2Test)
@@ -154,6 +157,8 @@ namespace Match3Solver
             // DEEP COPY
             int[][] board2TestCopy = Array.ConvertAll(board2Test, a => (int[])a.Clone());
             int newX = xPos + amount;
+            
+            // JUST RETURN IF NO MOVEMENT
             if (amount == 0)
             {
                 return board2TestCopy;
@@ -174,6 +179,7 @@ namespace Match3Solver
                     int count = 0;
                     while (count < amount)
                     {
+                        // WHEN MOVING TARGET TO RIGHT, TILES THAT GET VISITED MOVES TO THE LEFT
                         line[xPos + count] = line[xPos + count + 1];
                         count++;
                     }
@@ -183,6 +189,7 @@ namespace Match3Solver
                     int count = 0;
                     while (count < amount * -1)
                     {
+                        // WHEN MOVING TARGET TO LEFT, TILES THAT GET VISITED MOVES TO THE RIGHT
                         line[xPos - count] = line[xPos - count - 1];
                         count++;
                     }
@@ -198,6 +205,8 @@ namespace Match3Solver
             // DEEP COPY
             int[][] board2TestCopy = Array.ConvertAll(board2Test, a => (int[])a.Clone());
             int newY = yPos + amount;
+
+            // JUST RETURN IF NO MOVEMENT
             if (amount == 0)
             {
                 return board2TestCopy;
@@ -218,6 +227,7 @@ namespace Match3Solver
                     int count = 0;
                     while (count < amount)
                     {
+                        // WHEN MOVING TARGET DOWN, TILES THAT GET VISITED MOVES UP
                         boardCopy[yPos + count][xPos] = boardCopy[yPos + count + 1][xPos];
                         count++;
                     }
@@ -227,6 +237,7 @@ namespace Match3Solver
                     int count = 0;
                     while (count < amount * -1)
                     {
+                        // WHEN MOVING TARGET UP, TILES THAT GET VISITED MOVES DOWN
                         boardCopy[yPos - count][xPos] = boardCopy[yPos - count - 1][xPos];
                         count++;
                     }
@@ -238,6 +249,15 @@ namespace Match3Solver
             return board2TestCopy;
         }
 
+        /// <summary>
+        /// Recursive function to evaluate score of the board.
+        /// First checks matches, then get the score to evaluate.
+        /// Trigger gravity for tiles to drop down then recurse
+        /// </summary>
+        /// <param name="score"></param>
+        /// <param name="board2Test"></param>
+        /// <param name="initial"></param>
+        /// <returns></returns>
         public SolverInterface.Score evalBoard(SolverInterface.Score score, int[][] board2Test, Boolean initial)
         {
             // DEEP COPY
@@ -264,6 +284,11 @@ namespace Match3Solver
             return score;
         }
 
+        /// <summary>
+        /// Triggers tiles to fall down. Loops starts at the end of board.
+        /// </summary>
+        /// <param name="board2Test"></param>
+        /// <returns></returns>
         private int[][] gravityFall(int[][] board2Test)
         {
             int x = width - 1;
@@ -297,6 +322,15 @@ namespace Match3Solver
             return board2Test;
         }
 
+        /// <summary>
+        /// Checks if the 2 neighboring tiles to the left or down are the same.
+        /// Marks them by adding 10 to the value.
+        /// </summary>
+        /// <param name="yPos"></param>
+        /// <param name="xPos"></param>
+        /// <param name="target"></param>
+        /// <param name="board2Test"></param>
+        /// <returns></returns>
         public int[][] checkMatch(int yPos, int xPos, int target, int[][] board2Test)
         {
             // IGNORE UNKNOWN TILES
@@ -327,6 +361,13 @@ namespace Match3Solver
 
         }
 
+        /// <summary>
+        /// Adds score by checking values which are more than 10. Only tiles that got matched will have it's value > 10
+        /// </summary>
+        /// <param name="score"></param>
+        /// <param name="board2Test"></param>
+        /// <param name="initial"></param>
+        /// <returns></returns>
         public SolverInterface.Score extractScore(SolverInterface.Score score, int[][] board2Test, Boolean initial)
         {
             int x = 0;

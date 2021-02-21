@@ -25,6 +25,8 @@ namespace Match3Solver
         public int yPos { set; get; }
         public int StaminaCost { set; get; }
         public int Chain { set; get; }
+        public int Total { set; get; }
+        public int TotalWBroken { set; get; }
 
         public resultItem(SolverInterface.Movement input)
         {
@@ -45,6 +47,8 @@ namespace Match3Solver
             yPos = input.yPos;
             StaminaCost = input.score.staminaCost;
             Chain = input.score.chains;
+            Total = input.score.getTotal();
+            TotalWBroken = input.score.getTotal() - (2 * input.score.BrokenHeart);
         }
 
         private string getDirection(SolverInterface.Movement input)

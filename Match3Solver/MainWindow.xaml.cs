@@ -78,6 +78,12 @@ namespace Match3Solver
             GridViewColumn StaminaCost = new GridViewColumn();
             StaminaCost.Header = "Cost";
             StaminaCost.DisplayMemberBinding = new Binding("StaminaCost");
+            GridViewColumn TotalScore = new GridViewColumn();
+            TotalScore.Header = "Total";
+            TotalScore.DisplayMemberBinding = new Binding("Total");
+            GridViewColumn TotalWBroken = new GridViewColumn();
+            TotalWBroken.Header = "TotWBroken";
+            TotalWBroken.DisplayMemberBinding = new Binding("TotalWBroken");
             GridViewColumn sHeart = new GridViewColumn();
             sHeart.Header = "SHeart";
             sHeart.DisplayMemberBinding = new Binding("sHeart");
@@ -110,6 +116,8 @@ namespace Match3Solver
             resultGridView.Columns.Add(Amount);
             resultGridView.Columns.Add(Chain);
             resultGridView.Columns.Add(StaminaCost);
+            resultGridView.Columns.Add(TotalScore);
+            resultGridView.Columns.Add(TotalWBroken);
             resultGridView.Columns.Add(sHeart);
             resultGridView.Columns.Add(sStam);
             resultGridView.Columns.Add(sSent);
