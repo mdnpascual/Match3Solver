@@ -413,46 +413,43 @@ namespace Match3Solver
             return score;
         }
 
-        public int[][] parseImage(Image img)
+        public int[][] parseImage(Bitmap bmp)
         {
             int[][] board = new int[length][];
             List<System.Windows.Media.Color> extractedColor = new List<System.Windows.Media.Color>();
-
-            using (Bitmap bmp = new Bitmap(img))
+            //bmp.Save("C:\\Users\\mdnpm\\Desktop\\blah.png", ImageFormat.Png); // DEBUG
+            try
             {
-                try
+                int sizeWidth = bmp.Width;
+                int sizeLength = bmp.Height;
+                BitmapData bitmapData = bmp.LockBits(new Rectangle(0, 0, sizeWidth, sizeLength), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+
+                int startX = (int)(sizeWidth * 0.3125);
+                int startY = (int)(sizeLength * 0.1514);
+                int offset = 180; // 180 FOR 4K
+
+                int x = 0;
+                int y = 0;
+                while (y < length)
                 {
-                    int sizeWidth = bmp.Width;
-                    int sizeLength = bmp.Height;
-                    BitmapData bitmapData = bmp.LockBits(new Rectangle(0, 0, sizeWidth, sizeLength), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-
-                    int startX = (int)(sizeWidth * 0.3125);
-                    int startY = (int)(sizeLength * 0.1553);
-                    int offset = 180; // 180 FOR 4K
-
-                    int x = 0;
-                    int y = 0;
-                    while (y < length)
+                    x = 0;
+                    board[y] = new int[width];
+                    startX = (int)(sizeWidth * 0.3125);
+                    while (x < width)
                     {
-                        x = 0;
-                        board[y] = new int[width];
-                        startX = (int)(sizeWidth * 0.3125);
-                        while (x < width)
-                        {
-                            byte[] rgb = getPixel(startX, startY, sizeWidth, bitmapData);
-                            board[y][x] = Array.IndexOf(rawColor, GetClosestColor(rawColor, System.Windows.Media.Color.FromArgb((byte)255, rgb[0], rgb[1], rgb[2])));
-                            x++;
-                            startX += offset;
-                        }
-                        y++;
-                        startY += offset;
+                        byte[] rgb = getPixel(startX, startY, sizeWidth, bitmapData);
+                        board[y][x] = Array.IndexOf(rawColor, GetClosestColor(rawColor, System.Windows.Media.Color.FromArgb((byte)255, rgb[0], rgb[1], rgb[2])));
+                        x++;
+                        startX += offset;
                     }
-                    
+                    y++;
+                    startY += offset;
                 }
-                catch (Exception e)
-                {
 
-                }
+            }
+            catch (Exception e)
+            {
+
             }
 
             return board;

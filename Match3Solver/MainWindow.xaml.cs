@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
+//using System.Drawing;
 
 namespace Match3Solver
 {
@@ -50,9 +51,9 @@ namespace Match3Solver
 
         public int[][] board = new int[7][];
         public Rectangle[][] boardDisplay = new Rectangle[7][];
+        List<SolverInterface.Movement> results;
         public SolverUtils solver;
-        public IntPtr huniePopWindow;
-        public GameCapture capture;
+        public GameHook hook;
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
@@ -90,7 +91,7 @@ namespace Match3Solver
         public MainWindow()
         {
             InitializeComponent();
-            capture = new GameCapture();
+            hook = new GameHook(statusText);
             solver = new SolverUtils(length, width, boardDisplay);
 
             //board[0] = new int[] { 6, 7, 4, 1, 7, 7, 6, 4, 1 };
@@ -108,8 +109,9 @@ namespace Match3Solver
             board[5] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             board[6] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             initBoardDisplay();
-            //List<SolverInterface.Movement> results = solver.loopBoard(board);
+            results = solver.loopBoard(board);
             //updateResultView(results);
+
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -137,14 +139,23 @@ namespace Match3Solver
                             switch ((uint)vkey)
                             {
                                 case VK_I:
-                                    huniePopWindow = findHuniePopWindow();
+                                    hook.AttachProcess();
                                     break;
                                 case VK_C:
-                                    //System.Drawing.Image newImage = System.Drawing.Image.FromFile("C:\\Users\\mdnpm\\Desktop\\4K.png");
-                                    //drawBoard(solver.parseImage(newImage));
-                                    board = solver.parseImage(captureBoard(huniePopWindow));
-                                    updateResultView(solver.loopBoard(board));
+                                    board = solver.parseImage(captureBoard());
+                                    statusText.Foreground = new SolidColorBrush(Colors.IndianRed);
+                                    statusText.Text = "Screenshot Parsed. Solving Board...";
+
+                                    results.Clear();
+                                    results = solver.loopBoard(board);
+
+                                    statusText.Foreground = new SolidColorBrush(Colors.Goldenrod);
+                                    statusText.Text = "Board Solved. Updating Legal Moves...";
+                                    updateResultView(results);
                                     drawBoard(board);
+
+                                    statusText.Foreground = new SolidColorBrush(Colors.LimeGreen);
+                                    statusText.Text = "Done!";
 
                                     break;
                             }
@@ -179,14 +190,13 @@ namespace Match3Solver
             return targetWindow;
         }
 
-        private System.Drawing.Image captureBoard(IntPtr targetWindow)
+        private System.Drawing.Bitmap captureBoard()
         {
-            if(targetWindow != IntPtr.Zero)
+            if(hook.hooked)
             {
                 statusText.Foreground = new SolidColorBrush(Colors.Black);
                 statusText.Text = "Screenshot taken";
-                capture.CaptureWindowToFile(targetWindow, "C:\\Users\\mdnpm\\Desktop\\breh.png", ImageFormat.Png);
-                return capture.CaptureWindow(targetWindow);
+                return hook.getScreenshot();
             }
             else
             {
@@ -200,7 +210,7 @@ namespace Match3Solver
         private void updateResultView(List<SolverInterface.Movement> results)
         {
             resultListView.Items.Clear();
-            results.Clear();
+            resultGridView.Columns.Clear();
 
             GridViewColumn Position = new GridViewColumn();
             Position.Header = "Pos(Y,X)";
@@ -346,7 +356,7 @@ namespace Match3Solver
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            huniePopWindow = findHuniePopWindow();
+            hook.AttachProcess();
         }
     }
 }
