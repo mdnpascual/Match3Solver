@@ -13,17 +13,27 @@ namespace Match3Solver
     {
         
         System.Windows.Media.Color[] rawColor = new System.Windows.Media.Color[] {
-            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF5F1282"), //0 - Broken heart
-            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FFF553B4"), //1 - Heart
-            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FFA3ABC3"), //2 - Stamina
-            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF51C1C6"), //3 - Sentiment
-            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF115CA8"), //4 - Blue
-            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FFE55949"), //5 - Red
-            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF8EB94A"), //6 - Green
-            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FFBF6D16"), //7 - Gold
-            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FFDDB842")  //8 - Bell
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)121, (byte)29, (byte)161), //0 - Broken heart
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)200, (byte)36, (byte)135), //1 - Heart
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)149, (byte)158, (byte)185), //2 - Stamina
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)67, (byte)183, (byte)189), //3 - Sentiment
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)55, (byte)137, (byte)205), //4 - Blue
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)225, (byte)70, (byte)53), //5 - Red
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)148, (byte)172, (byte)88), //6 - Green
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)228, (byte)138, (byte)66), //7 - Gold
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)214, (byte)173, (byte)41),  //8 - Bell
+            System.Windows.Media.Color.FromArgb((byte)0, (byte)0, (byte)0, (byte)0),
+            System.Windows.Media.Color.FromArgb((byte)0, (byte)0, (byte)0, (byte)0),
+            System.Windows.Media.Color.FromArgb((byte)0, (byte)0, (byte)0, (byte)0),
+            System.Windows.Media.Color.FromArgb((byte)0, (byte)0, (byte)0, (byte)0),
+            System.Windows.Media.Color.FromArgb((byte)0, (byte)0, (byte)0, (byte)0),
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)21, (byte)104, (byte)155), //14 - Blue
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)222, (byte)64, (byte)46), //15 - Red
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)129, (byte)174, (byte)63), //16 - Green
+            System.Windows.Media.Color.FromArgb((byte)255, (byte)221, (byte)127, (byte)45), //17 - Gold
         };
-
+        //(System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF5F1282")
+        
         int length;
         int width;
         System.Windows.Shapes.Rectangle[][] boardDisplay;
@@ -417,15 +427,17 @@ namespace Match3Solver
         {
             int[][] board = new int[length][];
             List<System.Windows.Media.Color> extractedColor = new List<System.Windows.Media.Color>();
-            //bmp.Save("C:\\Users\\mdnpm\\Desktop\\blah.png", ImageFormat.Png); // DEBUG
+            bmp.Save("C:\\Users\\mdnpm\\Desktop\\blah.png", ImageFormat.Png); // DEBUG
             try
             {
                 int sizeWidth = bmp.Width;
                 int sizeLength = bmp.Height;
                 BitmapData bitmapData = bmp.LockBits(new Rectangle(0, 0, sizeWidth, sizeLength), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
-                int startX = (int)(sizeWidth * 0.3125);
-                int startY = (int)(sizeLength * 0.1514);
+                // CENTER = 1200X35 ON 3840X21560
+                // PIXEL TO CHECK 1227X364 ON 3840X2160
+                int startX = (int)(sizeWidth * 0.3195);
+                int startY = (int)(sizeLength * 0.1685);
                 int offset = 180; // 180 FOR 4K
 
                 int x = 0;
@@ -438,7 +450,7 @@ namespace Match3Solver
                     while (x < width)
                     {
                         byte[] rgb = getPixel(startX, startY, sizeWidth, bitmapData);
-                        board[y][x] = Array.IndexOf(rawColor, GetClosestColor(rawColor, System.Windows.Media.Color.FromArgb((byte)255, rgb[0], rgb[1], rgb[2])));
+                        board[y][x] = Array.IndexOf(rawColor, GetClosestColor(rawColor, System.Windows.Media.Color.FromArgb((byte)255, rgb[0], rgb[1], rgb[2]))) % 10;
                         x++;
                         startX += offset;
                     }
