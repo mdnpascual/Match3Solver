@@ -93,14 +93,6 @@ namespace Match3Solver
             InitializeComponent();
             hook = new GameHook(statusText);
             solver = new SolverUtils(length, width, boardDisplay);
-
-            //board[0] = new int[] { 6, 7, 4, 1, 7, 7, 6, 4, 1 };
-            //board[1] = new int[] { 2, 4, 3, 1, 4, 4, 5, 2, 3 };
-            //board[2] = new int[] { 2, 2, 3, 7, 4, 7, 1, 0, 5 };
-            //board[3] = new int[] { 5, 0, 5, 6, 1, 6, 1, 0, 6 };
-            //board[4] = new int[] { 6, 0, 0, 2, 3, 6, 5, 6, 5 };
-            //board[5] = new int[] { 3, 5, 3, 1, 1, 3, 1, 3, 5 };
-            //board[6] = new int[] { 3, 6, 2, 3, 8, 4, 5, 1, 4 };
             board[0] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             board[1] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             board[2] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -110,8 +102,6 @@ namespace Match3Solver
             board[6] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             initBoardDisplay();
             results = solver.loopBoard(board);
-            //updateResultView(results);
-
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -142,20 +132,45 @@ namespace Match3Solver
                                     hook.AttachProcess();
                                     break;
                                 case VK_C:
-                                    board = solver.parseImage(captureBoard());
-                                    statusText.Foreground = new SolidColorBrush(Colors.IndianRed);
-                                    statusText.Text = "Screenshot Parsed. Solving Board...";
+                                    statusText.Text = "Capturing Screenshot";
 
-                                    results.Clear();
-                                    results = solver.loopBoard(board);
+                                    new Thread(() =>
+                                    {
+                                        board = solver.parseImage(captureBoard());
 
-                                    statusText.Foreground = new SolidColorBrush(Colors.Goldenrod);
-                                    statusText.Text = "Board Solved. Updating Legal Moves...";
-                                    updateResultView(results);
-                                    drawBoard(board);
+                                        Dispatcher.BeginInvoke((Action)(() =>
+                                        {
+                                           statusText.Foreground = new SolidColorBrush(Colors.IndianRed);
+                                           statusText.Text = "Screenshot Parsed. Solving Board...";
+                                        }));
 
-                                    statusText.Foreground = new SolidColorBrush(Colors.LimeGreen);
-                                    statusText.Text = "Done!";
+                                        new Thread(() =>
+                                        {
+                                            results.Clear();
+                                            results = solver.loopBoard(board);
+
+                                            Dispatcher.BeginInvoke((Action)(() =>
+                                            {
+                                                statusText.Foreground = new SolidColorBrush(Colors.Goldenrod);
+                                                statusText.Text = "Board Solved. Updating Legal Moves...";
+                                            }));
+
+                                            new Thread(() =>
+                                            {
+                                                Dispatcher.BeginInvoke((Action)(() =>
+                                                {
+                                                    updateResultView(results);
+                                                    drawBoard(board);
+
+                                                    statusText.Foreground = new SolidColorBrush(Colors.LimeGreen);
+                                                    statusText.Text = "Done!";
+                                                }));
+                                                
+                                            }).Start();
+
+                                        }).Start();
+
+                                    }).Start();                                    
 
                                     break;
                             }
@@ -194,14 +209,21 @@ namespace Match3Solver
         {
             if(hook.hooked)
             {
-                statusText.Foreground = new SolidColorBrush(Colors.Black);
-                statusText.Text = "Screenshot taken";
+                Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    statusText.Foreground = new SolidColorBrush(Colors.Black);
+                }));
+                
                 return hook.getScreenshot();
             }
             else
             {
-                statusText.Foreground = new SolidColorBrush(Colors.Red);
-                statusText.Text = "Game not Injected!";
+                Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    statusText.Foreground = new SolidColorBrush(Colors.Red);
+                    statusText.Text = "Game not Injected!";
+                }));
+                
                 return null;
             }
             

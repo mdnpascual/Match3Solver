@@ -15,8 +15,9 @@
             </ListView.View>
         </ListView>
         <Button Content="Inject to Game" HorizontalAlignment="Left" Margin="10,365,0,5.667" Width="285" Click="Button_Click"/>
-        <TextBox HorizontalAlignment="Left" Margin="10,289,0,0" TextWrapping="Wrap" Text="Shift + Alt + :&#xD;&#xA;I - Inject to Game&#xA;C - Capture Board&#xA;1-9 - Toggle Sorting" Width="285" IsEnabled="False" BorderThickness="0" Height="71" VerticalAlignment="Top"/>
-        <TextBlock x:Name="statusText" HorizontalAlignment="Left" Margin="10,268,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="285"/>
+        <TextBox HorizontalAlignment="Left" Margin="10,243,0,0" TextWrapping="Wrap" Text="Shift + Alt + :&#xA;I - Inject to Game&#xA;C - Capture Board&#xA;1 - Cascade First&#xD;&#xA;2 - TotalWB First&#xD;&#xA;3 - Heart First&#xD;&#xA;4 - Joy First" Width="134" IsEnabled="False" BorderThickness="0" Height="117" VerticalAlignment="Top"/>
+        <TextBlock x:Name="statusText" HorizontalAlignment="Left" Margin="10,222,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="285"/>
+        <TextBox HorizontalAlignment="Left" Margin="149,243,0,0" TextWrapping="Wrap" Text="&#xD;&#xA;5 - Sentiment First&#xD;&#xA;6 - Blue First&#xD;&#xA;7 - Green First&#xD;&#xA;8 - Orange First&#xD;&#xA;9 - Red First&#xD;&#xA;0 - Broken Heart First" Width="146" IsEnabled="False" BorderThickness="0" Height="117" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

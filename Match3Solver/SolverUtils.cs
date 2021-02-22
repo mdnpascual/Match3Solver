@@ -427,7 +427,7 @@ namespace Match3Solver
         {
             int[][] board = new int[length][];
             List<System.Windows.Media.Color> extractedColor = new List<System.Windows.Media.Color>();
-            bmp.Save("C:\\Users\\mdnpm\\Desktop\\blah.png", ImageFormat.Png); // DEBUG
+            //bmp.Save("C:\\Users\\mdnpm\\Desktop\\blah.png", ImageFormat.Png); // DEBUG
             try
             {
                 int sizeWidth = bmp.Width;
@@ -438,7 +438,7 @@ namespace Match3Solver
                 // PIXEL TO CHECK 1227X364 ON 3840X2160
                 int startX = (int)(sizeWidth * 0.3195);
                 int startY = (int)(sizeLength * 0.1685);
-                int offset = 180; // 180 FOR 4K
+                int offset = (int)(0.04688 * sizeWidth); // 180 FOR 4K
 
                 int x = 0;
                 int y = 0;
