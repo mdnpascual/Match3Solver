@@ -335,12 +335,13 @@ namespace Match3Solver
                             countBlank++;
                         }
                         int countMove = y + 1 - countBlank;
+                        int yy = y;
                         while (countMove > 0)
                         {
-                            board2Test[y][x] = board2Test[y - countBlank][x];
-                            board2Test[y - countBlank][x] = 9;
+                            board2Test[yy][x] = board2Test[yy - countBlank][x];
+                            board2Test[yy - countBlank][x] = 9;
                             countMove--;
-                            y--;
+                            yy--;
                         }
                     }
                     x--;

@@ -48,6 +48,7 @@ namespace Match3Solver
         int width = 9;
         int length = 7;
         int boxSize = 30;
+        int sortingMode = 1;
 
         public int[][] board = new int[7][];
         public Rectangle[][] boardDisplay = new Rectangle[7][];
@@ -75,6 +76,7 @@ namespace Match3Solver
 
         private const uint VK_I = 0x49;
         private const uint VK_C = 0x43;
+        private const uint VK_0 = 0x30;
         private const uint VK_1 = 0x31;
         private const uint VK_2 = 0x32;
         private const uint VK_3 = 0x33;
@@ -113,7 +115,17 @@ namespace Match3Solver
             _source.AddHook(HwndHook);
 
             Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_I)); //CTRL + ALT + I
-            RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_C); //CTRL + ALT + C
+            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_C)); //CTRL + ALT + C
+            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_1)); //CTRL + ALT + 1
+            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_2)); //CTRL + ALT + 2
+            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_3)); //CTRL + ALT + 3
+            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_4)); //CTRL + ALT + 4
+            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_5)); //CTRL + ALT + 5
+            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_6)); //CTRL + ALT + 6
+            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_7)); //CTRL + ALT + 7
+            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_8)); //CTRL + ALT + 8
+            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_9)); //CTRL + ALT + 9
+            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_0)); //CTRL + ALT + 0
         }
 
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -128,6 +140,46 @@ namespace Match3Solver
                             int vkey = (((int)lParam >> 16) & 0xFFFF);
                             switch ((uint)vkey)
                             {
+                                case VK_0:
+                                    sortingMode = 0;
+                                    updateResultView(results);
+                                    break;
+                                case VK_1:
+                                    sortingMode = 1;
+                                    updateResultView(results);
+                                    break;
+                                case VK_2:
+                                    sortingMode = 2;
+                                    updateResultView(results);
+                                    break;
+                                case VK_3:
+                                    sortingMode = 3;
+                                    updateResultView(results);
+                                    break;
+                                case VK_4:
+                                    sortingMode = 4;
+                                    updateResultView(results);
+                                    break;
+                                case VK_5:
+                                    sortingMode = 5;
+                                    updateResultView(results);
+                                    break;
+                                case VK_6:
+                                    sortingMode = 6;
+                                    updateResultView(results);
+                                    break;
+                                case VK_7:
+                                    sortingMode = 7;
+                                    updateResultView(results);
+                                    break;
+                                case VK_8:
+                                    sortingMode = 8;
+                                    updateResultView(results);
+                                    break;
+                                case VK_9:
+                                    sortingMode = 9;
+                                    updateResultView(results);
+                                    break;
                                 case VK_I:
                                     hook.AttachProcess();
                                     break;
@@ -237,6 +289,9 @@ namespace Match3Solver
             GridViewColumn Position = new GridViewColumn();
             Position.Header = "Pos(Y,X)";
             Position.DisplayMemberBinding = new Binding("Position");
+            GridViewColumn Direction = new GridViewColumn();
+            Direction.Header = "Direction";
+            Direction.DisplayMemberBinding = new Binding("Direction");
             GridViewColumn Amount = new GridViewColumn();
             Amount.Header = "Amt";
             Amount.DisplayMemberBinding = new Binding("Amount");
@@ -281,6 +336,7 @@ namespace Match3Solver
             sBHeart.DisplayMemberBinding = new Binding("sBHeart");
             
             resultGridView.Columns.Add(Position);
+            resultGridView.Columns.Add(Direction);
             resultGridView.Columns.Add(Amount);
             resultGridView.Columns.Add(Chain);
             resultGridView.Columns.Add(StaminaCost);
@@ -296,11 +352,68 @@ namespace Match3Solver
             resultGridView.Columns.Add(sBell);
             resultGridView.Columns.Add(sBHeart);
 
+            results = sortList(results, sortingMode);
+
             results.ForEach(result =>
             {
                 resultListView.Items.Add(new resultItem(result));
             });
 
+        }
+
+        /// <summary>
+        /// 1 - Cascade First
+        /// 2 - TotalWB First
+        /// 3 - Heart First
+        /// 4 - Joy First
+        /// 5 - Sentiment First
+        /// 6 - Blue First
+        /// 7 - Green First
+        /// 8 - Orange First
+        /// 9 - Red First
+        /// 0 - Broken Heart First
+        /// </summary>
+        /// <param name="results"></param>
+        /// <param name="sortingMode"></param>
+        /// <returns></returns>
+        private List<SolverInterface.Movement> sortList(List<SolverInterface.Movement> results, int sortingMode)
+        {
+            switch (sortingMode)
+            {
+                case 1:
+                    return results.OrderByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.getTotal()).ThenByDescending(elem => elem.score.staminaCost).ToList();
+                    break;
+                case 2:
+                    return results.OrderByDescending(elem => elem.score.getTotal()).ThenByDescending(elem => elem.score.staminaCost).ToList();
+                    break;
+                case 3:
+                    return results.OrderByDescending(elem => elem.score.Heart).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
+                    break;
+                case 4:
+                    return results.OrderByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
+                    break;
+                case 5:
+                    return results.OrderByDescending(elem => elem.score.Sentiment).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
+                    break;
+                case 6:
+                    return results.OrderByDescending(elem => elem.score.Blue).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
+                    break;
+                case 7:
+                    return results.OrderByDescending(elem => elem.score.Green).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
+                    break;
+                case 8:
+                    return results.OrderByDescending(elem => elem.score.Gold).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
+                    break;
+                case 9:
+                    return results.OrderByDescending(elem => elem.score.Red).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
+                    break;
+                case 0:
+                    return results.OrderByDescending(elem => elem.score.BrokenHeart).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
+                    break;
+                default:
+                    return results;
+                    break;
+            }
         }
 
         private void drawBoard(int[][] board)
