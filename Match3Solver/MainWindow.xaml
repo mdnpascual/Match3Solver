@@ -19,9 +19,57 @@
             </ListView.View>
         </ListView>
         <Button Content="Inject to Game" HorizontalAlignment="Left" Margin="10,365,0,5.667" Width="285" Click="Button_Click"/>
-        <TextBox x:Name="leftTextBox" HorizontalAlignment="Left" Margin="10,243,0,0" TextWrapping="Wrap" Text="Shift + Alt + :&#xA;I - Inject to Game&#xA;C - Capture Board&#xA;1 - Cascade First&#xD;&#xA;2 - TotalWB First&#xD;&#xA;3 - Heart First&#xD;&#xA;4 - Joy First" Width="134" IsEnabled="False" BorderThickness="0" Height="117" VerticalAlignment="Top"/>
         <TextBlock x:Name="statusText" HorizontalAlignment="Left" Margin="10,222,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="285"/>
-        <TextBox x:Name="rightTextBox" HorizontalAlignment="Left" Margin="149,243,0,0" TextWrapping="Wrap" Text="&#xD;&#xA;5 - Sentiment First&#xD;&#xA;6 - Blue First&#xD;&#xA;7 - Green First&#xD;&#xA;8 - Orange First&#xD;&#xA;9 - Red First&#xD;&#xA;0 - Broken Heart First" Width="146" IsEnabled="False" BorderThickness="0" Height="117" VerticalAlignment="Top"/>
+        <RichTextBox x:Name="leftTextBox" HorizontalAlignment="Left" Height="117" Margin="10,243,0,0" VerticalAlignment="Top" Width="134" Block.LineHeight="1" FontSize="11.5" IsEnabled="False">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text="Shift + Alt + :"/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="I - Inject to Game"/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="C - Capture Board"/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="1 - Cascade First"/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="2 - TotalWB First"/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="3 - Heart First"/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="4 - Joy First"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+        <RichTextBox x:Name="rightTextBox" HorizontalAlignment="Left" Height="117" Margin="149,243,0,0" VerticalAlignment="Top" Width="146" Block.LineHeight="1" FontSize="11.5" IsEnabled="False">
+            <FlowDocument>
+                <Paragraph>
+                    <Run/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="5 - Sentiment First"/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="6 - Blue First"/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="7 - Green First"/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="8 - Orange First"/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="9 - Red First"/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="0 - Broken Heart First"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
 
     </Grid>
 </Window>

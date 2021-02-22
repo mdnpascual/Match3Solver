@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Documents;
 //using System.Drawing;
 
 namespace Match3Solver
@@ -142,42 +143,52 @@ namespace Match3Solver
                             {
                                 case VK_0:
                                     sortingMode = 0;
+                                    highLightMode("0 - Broken Heart First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_1:
                                     sortingMode = 1;
+                                    highLightMode("1 - Cascade First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_2:
                                     sortingMode = 2;
+                                    highLightMode("2 - TotalWB First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_3:
                                     sortingMode = 3;
+                                    highLightMode("3 - Heart First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_4:
                                     sortingMode = 4;
+                                    highLightMode("4 - Joy First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_5:
                                     sortingMode = 5;
+                                    highLightMode("5 - Sentiment First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_6:
                                     sortingMode = 6;
+                                    highLightMode("6 - Blue First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_7:
                                     sortingMode = 7;
+                                    highLightMode("7 - Green First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_8:
                                     sortingMode = 8;
+                                    highLightMode("8 - Orange First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_9:
                                     sortingMode = 9;
+                                    highLightMode("9 - Red First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_I:
@@ -232,6 +243,41 @@ namespace Match3Solver
                     break;
             }
             return IntPtr.Zero;
+        }
+
+        private void highLightMode(String toSearch, RichTextBox rtb, RichTextBox other)
+        {
+            // RESET OTHER RICH TEXT BOX
+            TextRange text2 = new TextRange(other.Document.ContentStart, other.Document.ContentEnd);
+            text2.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
+            text2.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+
+            // RESET CURRENT RICH TEXT BOX
+            TextRange text = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
+            TextPointer current = text.Start.GetInsertionPosition(LogicalDirection.Forward);
+            text.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
+            text.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+
+            while (current != null)
+            {
+                string textInRun = current.GetTextInRun(LogicalDirection.Forward);
+                if (!string.IsNullOrWhiteSpace(textInRun))
+                {
+                    int index = textInRun.IndexOf(toSearch);
+                    if (index != -1)
+                    {
+                        TextPointer selectionStart = current.GetPositionAtOffset(index, LogicalDirection.Forward);
+                        TextPointer selectionEnd = selectionStart.GetPositionAtOffset(toSearch.Length, LogicalDirection.Forward);
+                        TextRange selection = new TextRange(selectionStart, selectionEnd);
+                        selection.Text = toSearch;
+                        selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+                        selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
+                        rtb.Selection.Select(selection.Start, selection.End);
+                        rtb.Focus();
+                    }
+                }
+                current = current.GetNextContextPosition(LogicalDirection.Forward);
+            }
         }
 
         protected override void OnClosed(EventArgs e)
