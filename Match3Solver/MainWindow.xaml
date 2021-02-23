@@ -259,7 +259,7 @@
         <RichTextBox x:Name="leftTextBox" HorizontalAlignment="Left" Height="117" Margin="10,243,0,0" VerticalAlignment="Top" Width="134" Block.LineHeight="1" FontSize="11.5" IsEnabled="False">
             <FlowDocument>
                 <Paragraph>
-                    <Run Text="Shift + Alt + :"/>
+                    <Run Text="Ctrl + Alt + :"/>
                 </Paragraph>
                 <Paragraph>
                     <Run Text="I - Inject to Game"/>
