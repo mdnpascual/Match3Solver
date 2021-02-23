@@ -16,6 +16,10 @@ Usage:
 3) Press Ctrl + Alt + I to Inject
 4) Press Ctrl + Alt + C to capture board state and solve.
 
+Video Demo on how to Use and Read the results:
+
+[<img src="https://img.youtube.com/vi/nof1xo_q4ws/maxresdefault.jpg" width="50%">](https://youtu.be/nof1xo_q4ws)
+
 Features to be considered:
 - Results in overlay
 
