@@ -18,7 +18,7 @@ Usage:
 
 Video Demo on how to Use and Read the results:
 
-[<img src="https://img.youtube.com/vi/nof1xo_q4ws/maxresdefault.jpg" width="50%">](https://youtu.be/nof1xo_q4ws)
+[<img src="https://j.gifs.com/lxzokr.gif">](https://youtu.be/nof1xo_q4ws)
 
 Features to be considered:
 - Results in overlay
