@@ -148,7 +148,7 @@ namespace Match3Solver
                                     break;
                                 case VK_1:
                                     sortingMode = 1;
-                                    highLightMode("1 - Cascade First", leftTextBox, rightTextBox);
+                                    highLightMode("1 - Chain First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_2:
@@ -330,136 +330,13 @@ namespace Match3Solver
         private void updateResultView(List<SolverInterface.Movement> results)
         {
             resultListView.Items.Clear();
-            resultGridView.Columns.Clear();
-
-            GridViewColumn Position = new GridViewColumn();
-            Position.Header = "Pos(Y,X)";
-            Position.DisplayMemberBinding = new Binding("Position");
-            GridViewColumn Direction = new GridViewColumn();
-            Direction.Header = "Direction";
-            Direction.DisplayMemberBinding = new Binding("Direction");
-            GridViewColumn Amount = new GridViewColumn();
-            Amount.Header = "Amt";
-            Amount.DisplayMemberBinding = new Binding("Amount");
-            GridViewColumn Chain = new GridViewColumn();
-            Chain.Header = "Chain";
-            Chain.DisplayMemberBinding = new Binding("Chain");
-            GridViewColumn StaminaCost = new GridViewColumn();
-            StaminaCost.Header = "Cost";
-            StaminaCost.DisplayMemberBinding = new Binding("StaminaCost");
-            GridViewColumn TotalScore = new GridViewColumn();
-            TotalScore.Header = "Total";
-            TotalScore.DisplayMemberBinding = new Binding("Total");
-            GridViewColumn TotalWBroken = new GridViewColumn();
-            TotalWBroken.Header = "TotWBroken";
-            TotalWBroken.DisplayMemberBinding = new Binding("TotalWBroken");
-            GridViewColumn sHeart = new GridViewColumn();
-            sHeart.Header = "SHeart";
-            sHeart.DisplayMemberBinding = new Binding("sHeart");
-            GridViewColumn sStam = new GridViewColumn();
-            sStam.Header = "SStam";
-            sStam.DisplayMemberBinding = new Binding("sStam");
-            GridViewColumn sSent = new GridViewColumn();
-            sSent.Header = "SSent";
-            sSent.DisplayMemberBinding = new Binding("sSent");
-            GridViewColumn sBlue = new GridViewColumn();
-            sBlue.Header = "SBlue";
-            sBlue.DisplayMemberBinding = new Binding("sBlue");
-            GridViewColumn sRed = new GridViewColumn();
-            sRed.Header = "SRed";
-            sRed.DisplayMemberBinding = new Binding("sRed");
-            GridViewColumn sGreen = new GridViewColumn();
-            sGreen.Header = "SGreen";
-            sGreen.DisplayMemberBinding = new Binding("sGreen");
-            GridViewColumn sGold = new GridViewColumn();
-            sGold.Header = "SGold";
-            sGold.DisplayMemberBinding = new Binding("sGold");
-            GridViewColumn sBell = new GridViewColumn();
-            sBell.Header = "SBell";
-            sBell.DisplayMemberBinding = new Binding("sBell");
-            GridViewColumn sBHeart = new GridViewColumn();
-            sBHeart.Header = "SBHeart";
-            sBHeart.DisplayMemberBinding = new Binding("sBHeart");
             
-            resultGridView.Columns.Add(Position);
-            resultGridView.Columns.Add(Direction);
-            resultGridView.Columns.Add(Amount);
-            resultGridView.Columns.Add(Chain);
-            resultGridView.Columns.Add(StaminaCost);
-            resultGridView.Columns.Add(TotalScore);
-            resultGridView.Columns.Add(TotalWBroken);
-            resultGridView.Columns.Add(sHeart);
-            resultGridView.Columns.Add(sStam);
-            resultGridView.Columns.Add(sSent);
-            resultGridView.Columns.Add(sBlue);
-            resultGridView.Columns.Add(sRed);
-            resultGridView.Columns.Add(sGreen);
-            resultGridView.Columns.Add(sGold);
-            resultGridView.Columns.Add(sBell);
-            resultGridView.Columns.Add(sBHeart);
-
-            results = sortList(results, sortingMode);
-
+            results = solver.sortList(results, sortingMode);
             results.ForEach(result =>
             {
                 resultListView.Items.Add(new resultItem(result));
             });
 
-        }
-
-        /// <summary>
-        /// 1 - Cascade First
-        /// 2 - TotalWB First
-        /// 3 - Heart First
-        /// 4 - Joy First
-        /// 5 - Sentiment First
-        /// 6 - Blue First
-        /// 7 - Green First
-        /// 8 - Orange First
-        /// 9 - Red First
-        /// 0 - Broken Heart First
-        /// </summary>
-        /// <param name="results"></param>
-        /// <param name="sortingMode"></param>
-        /// <returns></returns>
-        private List<SolverInterface.Movement> sortList(List<SolverInterface.Movement> results, int sortingMode)
-        {
-            switch (sortingMode)
-            {
-                case 1:
-                    return results.OrderByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.getTotal()).ThenByDescending(elem => elem.score.staminaCost).ToList();
-                    break;
-                case 2:
-                    return results.OrderByDescending(elem => elem.score.getTotal()).ThenByDescending(elem => elem.score.staminaCost).ToList();
-                    break;
-                case 3:
-                    return results.OrderByDescending(elem => elem.score.Heart).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
-                    break;
-                case 4:
-                    return results.OrderByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
-                    break;
-                case 5:
-                    return results.OrderByDescending(elem => elem.score.Sentiment).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
-                    break;
-                case 6:
-                    return results.OrderByDescending(elem => elem.score.Blue).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
-                    break;
-                case 7:
-                    return results.OrderByDescending(elem => elem.score.Green).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
-                    break;
-                case 8:
-                    return results.OrderByDescending(elem => elem.score.Gold).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
-                    break;
-                case 9:
-                    return results.OrderByDescending(elem => elem.score.Red).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
-                    break;
-                case 0:
-                    return results.OrderByDescending(elem => elem.score.BrokenHeart).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ToList();
-                    break;
-                default:
-                    return results;
-                    break;
-            }
         }
 
         private void drawBoard(int[][] board)

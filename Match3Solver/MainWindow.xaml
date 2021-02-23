@@ -5,7 +5,228 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Match3Solver"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="987.094">
+        Title="MainWindow" Height="450" Width="1008.872">
+    <Window.Resources>
+        <local:CutoffConverter x:Key="ValueConverter" Cutoff="00" />
+        <!--STYLES-->
+        <Style x:Key="BrokenHeartStyle" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding sBHeart, Converter={StaticResource ValueConverter}}" Value="True">
+                    <Setter Property="Background" Value="DarkViolet" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="BellStyle" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding sBell, Converter={StaticResource ValueConverter}}" Value="True">
+                    <Setter Property="Background" Value="Yellow" />
+                    <Setter Property="Foreground" Value="Black" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="GoldStyle" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding sGold, Converter={StaticResource ValueConverter}}" Value="True">
+                    <Setter Property="Background" Value="Goldenrod" />
+                    <Setter Property="Foreground" Value="Black" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="GreenStyle" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding sGreen, Converter={StaticResource ValueConverter}}" Value="True">
+                    <Setter Property="Background" Value="Lime" />
+                    <Setter Property="Foreground" Value="Black" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="RedStyle" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding sRed, Converter={StaticResource ValueConverter}}" Value="True">
+                    <Setter Property="Background" Value="PaleVioletRed" />
+                    <Setter Property="Foreground" Value="Black" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="BlueStyle" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding sBlue, Converter={StaticResource ValueConverter}}" Value="True">
+                    <Setter Property="Background" Value="MediumBlue" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="SentStyle" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding sSent, Converter={StaticResource ValueConverter}}" Value="True">
+                    <Setter Property="Background" Value="Cyan" />
+                    <Setter Property="Foreground" Value="Black" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="StamStyle" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding sStam, Converter={StaticResource ValueConverter}}" Value="True">
+                    <Setter Property="Background" Value="Gainsboro" />
+                    <Setter Property="Foreground" Value="Black" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="HeartStyle" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding sHeart, Converter={StaticResource ValueConverter}}" Value="True">
+                    <Setter Property="Background" Value="Pink" />
+                    <Setter Property="Foreground" Value="Black" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <!--DATA TEMPLATES-->
+        <DataTemplate x:Key="BrokenHeartCell">
+            <DockPanel>
+                <TextBlock Style="{StaticResource BrokenHeartStyle}" HorizontalAlignment="Center" TextAlignment="Center" Width="34" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="sBHeart"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="BellCell">
+            <DockPanel>
+                <TextBlock Style="{StaticResource BellStyle}" HorizontalAlignment="Center" TextAlignment="Center" Width="25" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="sBell"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="GoldCell">
+            <DockPanel>
+                <TextBlock Style="{StaticResource GoldStyle}" HorizontalAlignment="Center" TextAlignment="Center" Width="24" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="sGold"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="GreenCell">
+            <DockPanel>
+                <TextBlock Style="{StaticResource GreenStyle}" HorizontalAlignment="Center" TextAlignment="Center" Width="26" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="sGreen"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="RedCell">
+            <DockPanel>
+                <TextBlock Style="{StaticResource RedStyle}" HorizontalAlignment="Center" TextAlignment="Center" Width="21" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="sRed"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="BlueCell">
+            <DockPanel>
+                <TextBlock Style="{StaticResource BlueStyle}" HorizontalAlignment="Center" TextAlignment="Center" Width="23" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="sBlue"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="SentCell">
+            <DockPanel>
+                <TextBlock Style="{StaticResource SentStyle}" HorizontalAlignment="Center" TextAlignment="Center" Width="23" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="sSent"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="StamCell">
+            <DockPanel>
+                <TextBlock Style="{StaticResource StamStyle}" HorizontalAlignment="Center" TextAlignment="Center" Width="23" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="sStam"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="HeartCell">
+            <DockPanel>
+                <TextBlock Style="{StaticResource HeartStyle}" HorizontalAlignment="Center" TextAlignment="Center" Width="28" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="sHeart"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="TotBrokenCell">
+            <DockPanel>
+                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Width="38" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="TotalWBroken"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="TotalCell">
+            <DockPanel>
+                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Width="26" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="Total"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="CostCell">
+            <DockPanel>
+                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Width="24" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="StaminaCost"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="ChainCell">
+            <DockPanel>
+                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Width="28" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="Chain"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="TileCell">
+            <DockPanel>
+                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Width="28" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="Amount"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="DirectCell">
+            <DockPanel>
+                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Width="32" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="Direction"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="PositionCell">
+            <DockPanel>
+                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Width="28" Margin="0">
+                    <TextBlock.Text>
+                        <Binding Path="Position"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
+    </Window.Resources>
     <Grid x:Name="mainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="811*"/>
@@ -14,7 +235,22 @@
         <ListView x:Name="resultListView" Margin="300,10,11.666,9.667" SelectionChanged="resultListView_SelectionChanged" Grid.ColumnSpan="2">
             <ListView.View>
                 <GridView x:Name="resultGridView">
-                    <GridViewColumn/>
+                    <GridViewColumn Header="Pos(Y,X)" CellTemplate="{StaticResource PositionCell}" />
+                    <GridViewColumn Header="Direction" CellTemplate="{StaticResource DirectCell}" />
+                    <GridViewColumn Header="Move" CellTemplate="{StaticResource TileCell}" />
+                    <GridViewColumn Header="Chain" CellTemplate="{StaticResource ChainCell}" />
+                    <GridViewColumn Header="Cost" CellTemplate="{StaticResource CostCell}" />
+                    <GridViewColumn Header="Total" CellTemplate="{StaticResource TotalCell}" />
+                    <GridViewColumn Header="TotWBrkn" CellTemplate="{StaticResource TotBrokenCell}" />
+                    <GridViewColumn Header="Heart" CellTemplate="{StaticResource HeartCell}" />
+                    <GridViewColumn Header="Stam" CellTemplate="{StaticResource StamCell}" />
+                    <GridViewColumn Header="Sent" CellTemplate="{StaticResource SentCell}" />
+                    <GridViewColumn Header="Blue" CellTemplate="{StaticResource BlueCell}" />
+                    <GridViewColumn Header="Red" CellTemplate="{StaticResource RedCell}" />
+                    <GridViewColumn Header="Green" CellTemplate="{StaticResource GreenCell}" />
+                    <GridViewColumn Header="Gold" CellTemplate="{StaticResource GoldCell}"/>
+                    <GridViewColumn Header="Bell" CellTemplate="{StaticResource BellCell}"/>
+                    <GridViewColumn Header="BHeart" CellTemplate="{StaticResource BrokenHeartCell}"/>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -32,7 +268,7 @@
                     <Run Text="C - Capture Board"/>
                 </Paragraph>
                 <Paragraph>
-                    <Run Text="1 - Cascade First"/>
+                    <Run Text="1 - Chain First"/>
                 </Paragraph>
                 <Paragraph>
                     <Run Text="2 - TotalWB First"/>

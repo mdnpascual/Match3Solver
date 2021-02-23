@@ -498,5 +498,60 @@ namespace Match3Solver
             }
         }
 
+        /// <summary>
+        /// 1 - Cascade First
+        /// 2 - TotalWB First
+        /// 3 - Heart First
+        /// 4 - Joy First
+        /// 5 - Sentiment First
+        /// 6 - Blue First
+        /// 7 - Green First
+        /// 8 - Orange First
+        /// 9 - Red First
+        /// 0 - Broken Heart First
+        /// </summary>
+        /// <param name="results"></param>
+        /// <param name="sortingMode"></param>
+        /// <returns></returns>
+        public List<SolverInterface.Movement> sortList(List<SolverInterface.Movement> results, int sortingMode)
+        {
+            switch (sortingMode)
+            {
+                case 1:
+                    return results.OrderByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.getTotal()).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                    break;
+                case 2:
+                    return results.OrderByDescending(elem => elem.score.getTotal()).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                    break;
+                case 3:
+                    return results.OrderByDescending(elem => elem.score.Heart).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                    break;
+                case 4:
+                    return results.OrderByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                    break;
+                case 5:
+                    return results.OrderByDescending(elem => elem.score.Sentiment).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                    break;
+                case 6:
+                    return results.OrderByDescending(elem => elem.score.Blue).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                    break;
+                case 7:
+                    return results.OrderByDescending(elem => elem.score.Green).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                    break;
+                case 8:
+                    return results.OrderByDescending(elem => elem.score.Gold).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                    break;
+                case 9:
+                    return results.OrderByDescending(elem => elem.score.Red).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                    break;
+                case 0:
+                    return results.OrderByDescending(elem => elem.score.BrokenHeart).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                    break;
+                default:
+                    return results;
+                    break;
+            }
+        }
+
     }
 }

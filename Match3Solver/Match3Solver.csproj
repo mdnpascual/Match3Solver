@@ -162,6 +162,7 @@
     <Compile Include="Capture\SharpDX\Component.cs" />
     <Compile Include="Capture\SharpDX\ComponentBase.cs" />
     <Compile Include="Capture\SharpDX\IComponent.cs" />
+    <Compile Include="CutoffConverter.cs" />
     <Compile Include="GameHook.cs" />
     <Compile Include="resultItem.cs" />
     <Compile Include="SolverInterface.cs" />
