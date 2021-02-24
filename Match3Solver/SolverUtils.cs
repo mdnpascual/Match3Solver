@@ -426,11 +426,11 @@ namespace Match3Solver
             int[][] board = new int[length][];
             List<System.Windows.Media.Color> extractedColor = new List<System.Windows.Media.Color>();
             //bmp.Save("C:\\Users\\mdnpm\\Desktop\\blah.png", ImageFormat.Png); // DEBUG
+            int sizeWidth = bmp.Width;
+            int sizeLength = bmp.Height;
+            BitmapData bitmapData = bmp.LockBits(new Rectangle(0, 0, sizeWidth, sizeLength), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             try
             {
-                int sizeWidth = bmp.Width;
-                int sizeLength = bmp.Height;
-                BitmapData bitmapData = bmp.LockBits(new Rectangle(0, 0, sizeWidth, sizeLength), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
                 // CENTER = 1200X35 ON 3840X21560
                 // PIXEL TO CHECK 1227X364 ON 3840X2160
@@ -460,6 +460,12 @@ namespace Match3Solver
             catch (Exception e)
             {
 
+            }
+            finally
+            {
+                bmp.UnlockBits(bitmapData);
+                bmp.Dispose();
+                GC.Collect();
             }
 
             return board;

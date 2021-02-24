@@ -25,8 +25,7 @@ Features to be considered:
 
 Known Bugs:
 - Random Game crash when alt-tabing
-- Memory Leaks.
-- Some Edge cases chains not getting picked up
+- Error 15 when trying to inject the solver to the game
 
 Unknown Bugs:
-- Only Tested on monitos 3840x2160 and 1920x1080. Don't know how the gmae behaves on widescreen monitors
+- Only Tested on monitors with 16:9 Aspect Ratio (3840x2160, 2560x1440, 1920x1080). Don't know how the gmae behaves on widescreen monitors

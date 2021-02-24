@@ -241,7 +241,10 @@ namespace Match3Solver
                                     statusText.Text = "Capturing Screenshot";
                                     new Thread(() =>
                                     {
-                                        board = solver.parseImage(debugMode ? new System.Drawing.Bitmap(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "\\debug.png") : captureBoard());
+                                        System.Drawing.Bitmap screenshot = debugMode ? new System.Drawing.Bitmap(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "\\debug.png") : captureBoard();
+                                        board = solver.parseImage(screenshot);
+                                        screenshot.Dispose();
+                                        GC.Collect();
 
                                         Dispatcher.BeginInvoke((Action)(() =>
                                         {
