@@ -55,6 +55,7 @@ namespace Match3Solver
         List<SolverInterface.Movement> results;
         public SolverUtils solver;
         public GameHook hook;
+        public Boolean debugMode = false;
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
@@ -240,7 +241,7 @@ namespace Match3Solver
                                     statusText.Text = "Capturing Screenshot";
                                     new Thread(() =>
                                     {
-                                        board = solver.parseImage(captureBoard());
+                                        board = solver.parseImage(debugMode ? new System.Drawing.Bitmap(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "\\debug.png") : captureBoard());
 
                                         Dispatcher.BeginInvoke((Action)(() =>
                                         {

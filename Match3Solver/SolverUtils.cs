@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 
 namespace Match3Solver
 {
@@ -408,7 +405,7 @@ namespace Match3Solver
                 while (x < width)
                 {
                     int value = board2Test[y][x];
-                    if (value > 10)
+                    if (value > 9)
                     {
                         score.addScoreFromValue(board2Test[y][x]);
                         board2Test[y][x] = 9;
