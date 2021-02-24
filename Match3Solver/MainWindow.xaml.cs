@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Threading;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Documents;
-//using System.Drawing;
+using CrashReporterDotNET;
+using System.Text;
+using System.Linq;
 
 namespace Match3Solver
 {
@@ -90,6 +89,7 @@ namespace Match3Solver
 
         private IntPtr _windowHandle;
         private HwndSource _source;
+        private static ReportCrash _reportCrash;
 
         public MainWindow()
         {
@@ -105,6 +105,48 @@ namespace Match3Solver
             board[6] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             initBoardDisplay();
             results = solver.loopBoard(board);
+            initCrashReporter();
+        }
+
+        private static void initCrashReporter()
+        {
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+                SendReport((Exception)args.ExceptionObject);
+            };
+            byte[] data = Convert.FromBase64String("enFhYy56cWh1K3puZ3B1M2ZieWlyZXBlbmZ1ZXJjYmVnQHR6bnZ5LnBieg==");
+            string decodedString = Encoding.UTF8.GetString(data);
+            byte[] data2 = Convert.FromBase64String("MnI1czM3NjctMG9xMC00NTFxLW4zcXEtcG9wcm44MzkwOHM5");
+            string decodedString2 = Encoding.UTF8.GetString(data2);
+            _reportCrash = new ReportCrash(String.Join("", decodedString.Select(x => char.IsLetter(x) ? (x >= 65 && x <= 77) || (x >= 97 && x <= 109) ? (char)(x + 13) : (char)(x - 13) : x)))
+            {
+                Silent = true,
+                ShowScreenshotTab = true,
+                IncludeScreenshot = false,
+                #region Optional Configuration
+                AnalyzeWithDoctorDump = true,
+                DoctorDumpSettings = new DoctorDumpSettings
+                {
+                    ApplicationID = new Guid(String.Join("", decodedString2.Select(x => char.IsLetter(x) ? (x >= 65 && x <= 77) || (x >= 97 && x <= 109) ? (char)(x + 13) : (char)(x - 13) : x))),
+                    OpenReportInBrowser = true
+                }
+                #endregion
+            };
+            _reportCrash.RetryFailedReports();
+        }
+
+        public static void SendReport(Exception exception, string developerMessage = "")
+        {
+            _reportCrash.DeveloperMessage = developerMessage;
+            _reportCrash.Silent = false;
+            _reportCrash.Send(exception);
+        }
+
+        public static void SendReportSilently(Exception exception, string developerMessage = "")
+        {
+            _reportCrash.DeveloperMessage = developerMessage;
+            _reportCrash.Silent = true;
+            _reportCrash.Send(exception);
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -196,7 +238,6 @@ namespace Match3Solver
                                     break;
                                 case VK_C:
                                     statusText.Text = "Capturing Screenshot";
-
                                     new Thread(() =>
                                     {
                                         board = solver.parseImage(captureBoard());

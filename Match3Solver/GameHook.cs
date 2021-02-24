@@ -48,7 +48,7 @@ namespace Match3Solver
                     continue;
                 }
 
-                Direct3DVersion direct3DVersion = Direct3DVersion.Direct3D11;
+                Direct3DVersion direct3DVersion = Direct3DVersion.AutoDetect;
 
                 CaptureConfig cc = new CaptureConfig()
                 {
