@@ -11,10 +11,13 @@ Features:
 - Various sort modes for results
 
 Usage:
-1) Run the Match3Solver.exe as admin
-2) Run huniepop
-3) Press Ctrl + Alt + I to Inject
-4) Press Ctrl + Alt + C to capture board state and solve.
+1) Download the Zip
+2) Right click the Zip >> Properties >> Tick Unblock and Click Apply
+3) Extract the zip BUT DO NOT PUT IT ON THE SAME FOLDER WHERE HUNIEPOP2 is located
+4) Run the Match3Solver.exe as admin
+5) Run huniepop
+6) Press Ctrl + Alt + I to Inject
+7) Press Ctrl + Alt + C to capture board state and solve.
 
 Video Demo on how to Use and Read the results:
 
