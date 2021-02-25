@@ -21,40 +21,17 @@ namespace Match3Solver
     public partial class MainWindow : Window, SolverInterface
     {
 
-        //0 - Broken heart
-        //1 - Heart
-        //2 - Stamina
-        //3 - Sentiment
-        //4 - Blue
-        //5 - Red
-        //6 - Green
-        //7 - Gold
-        //8 - Bell
-        //9 - Unknown
-        Dictionary<int, Color> myColors = new Dictionary<int, Color>
-        {
-            { 0, Colors.DarkViolet },
-            { 1, Colors.HotPink },
-            { 2, Colors.LightSlateGray },
-            { 3, Colors.Cyan },
-            { 4, Colors.Blue },
-            { 5, Colors.Red },
-            { 6, Colors.Lime },
-            { 7, Colors.Goldenrod },
-            { 8, Colors.Yellow },
-            { 9, Colors.White }
-        };
-
-        int width = 9;
-        int length = 7;
-        int boxSize = 30;
-        int sortingMode = 1;
+        public int width = 9;
+        public int length = 7;
+        public int boxSize = 30;
+        public int sortingMode = 1;
 
         public int[][] board = new int[7][];
         public Rectangle[][] boardDisplay = new Rectangle[7][];
         List<SolverInterface.Movement> results;
         public SolverUtils solver;
         public GameHook hook;
+        public UIFunctions draw;
         public Boolean debugMode = false;
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -97,6 +74,7 @@ namespace Match3Solver
             InitializeComponent();
             hook = new GameHook(statusText);
             solver = new SolverUtils(length, width, boardDisplay);
+            draw = new UIFunctions(this);
             board[0] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             board[1] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             board[2] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -104,9 +82,10 @@ namespace Match3Solver
             board[4] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             board[5] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             board[6] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            initBoardDisplay();
+            draw.initBoardDisplay();
             results = solver.loopBoard(board);
             initCrashReporter();
+
         }
 
         private static void initCrashReporter()
@@ -186,52 +165,52 @@ namespace Match3Solver
                             {
                                 case VK_0:
                                     sortingMode = 0;
-                                    highLightMode("0 - Broken Heart First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("0 - Broken Heart First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_1:
                                     sortingMode = 1;
-                                    highLightMode("1 - Chain First", leftTextBox, rightTextBox);
+                                    draw.highLightMode("1 - Chain First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_2:
                                     sortingMode = 2;
-                                    highLightMode("2 - TotalWB First", leftTextBox, rightTextBox);
+                                    draw.highLightMode("2 - TotalWB First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_3:
                                     sortingMode = 3;
-                                    highLightMode("3 - Heart First", leftTextBox, rightTextBox);
+                                    draw.highLightMode("3 - Heart First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_4:
                                     sortingMode = 4;
-                                    highLightMode("4 - Joy First", leftTextBox, rightTextBox);
+                                    draw.highLightMode("4 - Joy First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_5:
                                     sortingMode = 5;
-                                    highLightMode("5 - Sentiment First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("5 - Sentiment First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_6:
                                     sortingMode = 6;
-                                    highLightMode("6 - Blue First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("6 - Blue First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_7:
                                     sortingMode = 7;
-                                    highLightMode("7 - Green First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("7 - Green First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_8:
                                     sortingMode = 8;
-                                    highLightMode("8 - Orange First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("8 - Orange First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_9:
                                     sortingMode = 9;
-                                    highLightMode("9 - Red First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("9 - Red First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_I:
@@ -268,7 +247,7 @@ namespace Match3Solver
                                                 Dispatcher.BeginInvoke((Action)(() =>
                                                 {
                                                     updateResultView(results);
-                                                    drawBoard(board);
+                                                    draw.drawBoard(board);
 
                                                     statusText.Foreground = new SolidColorBrush(Colors.LimeGreen);
                                                     statusText.Text = "Done!";
@@ -290,62 +269,11 @@ namespace Match3Solver
             return IntPtr.Zero;
         }
 
-        private void highLightMode(String toSearch, RichTextBox rtb, RichTextBox other)
-        {
-            // RESET OTHER RICH TEXT BOX
-            TextRange text2 = new TextRange(other.Document.ContentStart, other.Document.ContentEnd);
-            text2.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
-            text2.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-
-            // RESET CURRENT RICH TEXT BOX
-            TextRange text = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
-            TextPointer current = text.Start.GetInsertionPosition(LogicalDirection.Forward);
-            text.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
-            text.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-
-            while (current != null)
-            {
-                string textInRun = current.GetTextInRun(LogicalDirection.Forward);
-                if (!string.IsNullOrWhiteSpace(textInRun))
-                {
-                    int index = textInRun.IndexOf(toSearch);
-                    if (index != -1)
-                    {
-                        TextPointer selectionStart = current.GetPositionAtOffset(index, LogicalDirection.Forward);
-                        TextPointer selectionEnd = selectionStart.GetPositionAtOffset(toSearch.Length, LogicalDirection.Forward);
-                        TextRange selection = new TextRange(selectionStart, selectionEnd);
-                        selection.Text = toSearch;
-                        selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
-                        selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
-                        rtb.Selection.Select(selection.Start, selection.End);
-                        rtb.Focus();
-                    }
-                }
-                current = current.GetNextContextPosition(LogicalDirection.Forward);
-            }
-        }
-
         protected override void OnClosed(EventArgs e)
         {
             _source.RemoveHook(HwndHook);
             UnregisterHotKey(_windowHandle, HOTKEY_ID);
             base.OnClosed(e);
-        }
-
-        private IntPtr findHuniePopWindow()
-        {
-            IntPtr targetWindow = FindWindow(null, "HuniePop 2 - Double Date");
-            if (targetWindow == IntPtr.Zero)
-            {
-                statusText.Foreground = new SolidColorBrush(Colors.Red);
-                statusText.Text = "Game not Found!";
-            }
-            else
-            {
-                statusText.Foreground = new SolidColorBrush(Colors.Green);
-                statusText.Text = "Injected to Game";
-            }
-            return targetWindow;
         }
 
         private System.Drawing.Bitmap captureBoard()
@@ -384,63 +312,6 @@ namespace Match3Solver
 
         }
 
-        private void drawBoard(int[][] board)
-        {
-            int x = 0;
-            int y = 0;
-            while (y < length)
-            {
-                x = 0;
-                while (x < width)
-                {
-                    boardDisplay[y][x].Fill = new SolidColorBrush(myColors[board[y][x] % 10]);
-                    x++;
-                }
-                y++;
-            }
-        }
-
-        private void initBoardDisplay()
-        {
-            int xPos = 10;
-            int yPos = 10;
-            int x = 0;
-            int y = 0;
-
-            while(y < length)
-            {
-                boardDisplay[y] = new Rectangle[width];
-                xPos = 10;
-                x = 0;
-                while(x < width)
-                {
-                    boardDisplay[y][x] = createRectangle(xPos, yPos, myColors[board[y][x] % 10]);
-                    mainGrid.Children.Add(boardDisplay[y][x]);
-                    xPos += boxSize;
-                    x++;
-                }
-                yPos += boxSize;
-                y++;
-            }
-        }
-
-        private Rectangle createRectangle(int xPos, int yPos, Color color)
-        {
-            Rectangle rect = new Rectangle();
-            rect.Fill = new SolidColorBrush(color);
-            
-            rect.VerticalAlignment = VerticalAlignment.Top;
-            rect.HorizontalAlignment = HorizontalAlignment.Left;
-
-            rect.Margin = new Thickness(xPos, yPos, 0, 0);
-            rect.Stroke = new SolidColorBrush(Colors.Black);
-
-            rect.Height = boxSize;
-            rect.Width = boxSize;
-
-            return rect;
-        }
-
         private void resultListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // DEEP COPY
@@ -454,7 +325,7 @@ namespace Match3Solver
             {
                 board2Test = solver.moveHorizontal(selectedItem.yPos, selectedItem.xPos, selectedItem.Amount, board2Test);
             }
-            drawBoard(board2Test);
+            draw.drawBoard(board2Test);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

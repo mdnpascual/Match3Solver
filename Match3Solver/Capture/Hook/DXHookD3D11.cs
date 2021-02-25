@@ -545,8 +545,8 @@ namespace Capture.Hook
 
                 #region Draw overlay (after screenshot so we don't capture overlay as well)
                 var displayOverlays = Overlays;
-                //if (this.Config.ShowOverlay && displayOverlays != null)
-                if (this.Config.ShowOverlay)
+
+                if (this.Config.ShowOverlay && displayOverlays != null)
                 {
                     // Initialise Overlay Engine
                     if (_swapChainPointer != swapChain.NativePointer || _overlayEngine == null
@@ -554,17 +554,8 @@ namespace Capture.Hook
                     {
                         if (_overlayEngine != null)
                             _overlayEngine.Dispose();
-                        this.DebugMessage("Hook: OVERLAY CREATED?");
                         _overlayEngine = new DX11.DXOverlayEngine();
-                        //_overlayEngine.Overlays.AddRange((IEnumerable<IOverlay>)displayOverlays);
-                        _overlayEngine.Overlays.Add(new Capture.Hook.Common.Overlay
-                        {
-                            Elements =
-                        {
-                            new Capture.Hook.Common.FramesPerSecond(new System.Drawing.Font("Arial", 100)) { Location = new System.Drawing.Point(5,5), Color = System.Drawing.Color.Green, AntiAliased = true},
-                            new Capture.Hook.Common.ImageElement(new System.Drawing.Bitmap(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "\\arrow.png")){ Location = new System.Drawing.Point(100, 100) }
-                        }
-                        });
+                        _overlayEngine.Overlays.AddRange((IEnumerable<IOverlay>)displayOverlays);
                         _overlayEngine.Initialise(swapChain);
 
                         _swapChainPointer = swapChain.NativePointer;

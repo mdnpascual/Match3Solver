@@ -83,6 +83,16 @@ namespace Match3Solver
         public Bitmap getScreenshot()
         {
             _captureProcess.BringProcessWindowToFront();
+            System.Drawing.ImageConverter converter = new System.Drawing.ImageConverter();
+            byte[] img = (byte[])converter.ConvertTo(System.Drawing.Image.FromFile(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "\\arrow.png"), typeof(byte[]));
+            _captureProcess.CaptureInterface.DrawOverlayInGame(new Capture.Hook.Common.Overlay
+            {
+                Elements = 
+                {
+                    new Capture.Hook.Common.ImageElement(){ Location = new System.Drawing.Point(100, 100), Image = img }
+                },
+                Hidden = false
+            });
             return _captureProcess.CaptureInterface.GetScreenshot(Rectangle.Empty, new TimeSpan(0,0,3), null, ImageFormat.Png).ToBitmap();
         }
 

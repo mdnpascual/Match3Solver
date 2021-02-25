@@ -170,6 +170,7 @@
     <Compile Include="resultItem.cs" />
     <Compile Include="SolverInterface.cs" />
     <Compile Include="SolverUtils.cs" />
+    <Compile Include="UIFunctions.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
