@@ -94,7 +94,7 @@ namespace Match3Solver
                 int xOffset = command.isVertical ? 0 : (command.amount > 0) ? i-1 : i;
                 int yOffset = command.isVertical ? (command.amount > 0) ? i - 1 : i : 0;
 
-                elem.Add(new Capture.Hook.Common.ImageElement() { Location = new System.Drawing.Point((startX + (offset * command.xPos)) + (offset * xOffset) + directionOffsetX, (startY + (offset * command.yPos)) + (offset * yOffset) + directionOffsetY), Image = command.isVertical ? arrowTailV[0] : arrowTailH[0] });
+                elem.Add(new Capture.Hook.Common.ImageElement() { Location = new System.Drawing.Point((startX + (offset * command.xPos)) + (offset * xOffset) + directionOffsetX, (startY + (offset * command.yPos)) + (offset * yOffset) + directionOffsetY), Image = command.isVertical ? arrowTailV[0] : arrowTailH[0], Scale = (float)((float)width / 3840) });
 
                 if (i >= 0) i--;
                 else i++;
@@ -108,7 +108,7 @@ namespace Match3Solver
             int headOffsetY = command.isVertical ? ((command.amount > 0) ? (int)(-1 * (width * 0.0489584)) : (int)(width * 0.002604167)) : ((command.amount > 0) ? (int)(width * 0.00078125) : 1);
 
             // HEAD
-            elem.Add(new Capture.Hook.Common.ImageElement() { Location = new System.Drawing.Point(startX + (offset * finalX) + directionOffsetX + headOffsetX, startY + (offset * finalY) + directionOffsetY + headOffsetY), Image = command.isVertical ? arrowHeadV[0] : arrowHeadH[0], Angle = (command.amount > 0) ? 3.14159f : 0.0f});
+            elem.Add(new Capture.Hook.Common.ImageElement() { Location = new System.Drawing.Point(startX + (offset * finalX) + directionOffsetX + headOffsetX, startY + (offset * finalY) + directionOffsetY + headOffsetY), Image = command.isVertical ? arrowHeadV[0] : arrowHeadH[0], Angle = (command.amount > 0) ? 3.14159f : 0.0f, Scale = (float)((float)width / 3840) });
 
             return new Capture.Hook.Common.Overlay
             {
