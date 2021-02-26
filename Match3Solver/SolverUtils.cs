@@ -432,7 +432,7 @@ namespace Match3Solver
             try
             {
 
-                // CENTER = 1200X35 ON 3840X21560
+                // CENTER = 1200X35 ON 3840X2160
                 // PIXEL TO CHECK 1227X364 ON 3840X2160
                 int startX = (int)(sizeWidth * 0.3195);
                 int startY = (int)(sizeLength * 0.1685);
@@ -444,7 +444,7 @@ namespace Match3Solver
                 {
                     x = 0;
                     board[y] = new int[width];
-                    startX = (int)(sizeWidth * 0.3125);
+                    startX = (int)(sizeWidth * 0.3125); // 3125?
                     while (x < width)
                     {
                         byte[] rgb = getPixel(startX, startY, sizeWidth, bitmapData);
@@ -522,37 +522,26 @@ namespace Match3Solver
             {
                 case 1:
                     return results.OrderByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.getTotal()).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 case 2:
                     return results.OrderByDescending(elem => elem.score.getTotal()).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 case 3:
                     return results.OrderByDescending(elem => elem.score.Heart).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 case 4:
                     return results.OrderByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 case 5:
                     return results.OrderByDescending(elem => elem.score.Sentiment).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 case 6:
                     return results.OrderByDescending(elem => elem.score.Blue).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 case 7:
                     return results.OrderByDescending(elem => elem.score.Green).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 case 8:
                     return results.OrderByDescending(elem => elem.score.Gold).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 case 9:
                     return results.OrderByDescending(elem => elem.score.Red).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 case 0:
                     return results.OrderByDescending(elem => elem.score.BrokenHeart).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 default:
                     return results;
-                    break;
             }
         }
 

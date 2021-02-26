@@ -220,6 +220,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\bHeartHeadH.png" />
+    <Resource Include="Resources\bHeartHeadV.png" />
+    <Resource Include="Resources\bHeartTailH.png" />
+    <Resource Include="Resources\bHeartTailV.png" />
     <Resource Include="Calculations.txt" />
     <Content Include="EasyHook32.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

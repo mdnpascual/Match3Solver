@@ -34,6 +34,9 @@ namespace Match3Solver
         public UIFunctions draw;
         public Boolean debugMode = false;
 
+        private int lastScreenHeight = 0;
+        private int lastScreenWidth = 0;
+
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
@@ -221,6 +224,8 @@ namespace Match3Solver
                                     new Thread(() =>
                                     {
                                         System.Drawing.Bitmap screenshot = debugMode ? new System.Drawing.Bitmap(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "\\debug.png") : captureBoard();
+                                        lastScreenHeight = screenshot.Height;
+                                        lastScreenWidth = screenshot.Width;
                                         board = solver.parseImage(screenshot);
                                         screenshot.Dispose();
                                         GC.Collect();
@@ -246,7 +251,7 @@ namespace Match3Solver
                                             {
                                                 Dispatcher.BeginInvoke((Action)(() =>
                                                 {
-                                                    updateResultView(results);
+                                                    updateResultView(results, lastScreenHeight, lastScreenWidth);
                                                     draw.drawBoard(board);
 
                                                     statusText.Foreground = new SolidColorBrush(Colors.LimeGreen);
@@ -302,9 +307,15 @@ namespace Match3Solver
 
         private void updateResultView(List<SolverInterface.Movement> results)
         {
+            updateResultView(results, lastScreenHeight, lastScreenWidth);
+        }
+
+        private void updateResultView(List<SolverInterface.Movement> results, int height, int width)
+        {
             resultListView.Items.Clear();
             
             results = solver.sortList(results, sortingMode);
+            hook.drawOverlay(draw.parseMovementAndDraw(results[0], height, width));
             results.ForEach(result =>
             {
                 resultListView.Items.Add(new resultItem(result));
