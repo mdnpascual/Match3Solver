@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Match3Solver"
         mc:Ignorable="d"
-        Title="MainWindow" Height="471.778" Width="1008.872">
+        Title="Huniepop 2 Solver" Height="471.778" Width="1008.872" Icon="Icon.png">
     <Window.Resources>
         <local:CutoffConverter x:Key="ValueConverter" Cutoff="00" />
         <!--STYLES-->

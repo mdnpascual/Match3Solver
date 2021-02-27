@@ -57,6 +57,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CrashReporter.NET, Version=1.6.0.0, Culture=neutral, PublicKeyToken=7828e0fd88cab698, processorArchitecture=MSIL">
       <HintPath>..\packages\CrashReporter.NET.Official.1.6.0\lib\net40\CrashReporter.NET.dll</HintPath>
@@ -224,6 +227,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Icon.ico" />
+    <Resource Include="Icon.png" />
     <Resource Include="Resources\bHeartHeadH.png" />
     <Resource Include="Resources\bHeartHeadV.png" />
     <Resource Include="Resources\bHeartTailH.png" />

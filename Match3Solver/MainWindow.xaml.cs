@@ -127,7 +127,7 @@ namespace Match3Solver
                         Dispatcher.BeginInvoke((Action)(() =>
                         {
                             statusText.Foreground = new SolidColorBrush(Colors.IndianRed);
-                            statusText.Text = "Waiting for HuniePop2 to Open.";
+                            statusText.Text = "Waiting for HuniePop 2 to Open.";
                         }));
                     }
 
@@ -145,7 +145,7 @@ namespace Match3Solver
             };
             byte[] data = Convert.FromBase64String("enFhYy56cWh1K3puZ3B1M2ZieWlyZXBlbmZ1ZXJjYmVnQHR6bnZ5LnBieg==");
             string decodedString = Encoding.UTF8.GetString(data);
-            byte[] data2 = Convert.FromBase64String("MnI1czM3NjctMG9xMC00NTFxLW4zcXEtcG9wcm44MzkwOHM5");
+            byte[] data2 = Convert.FromBase64String("cjBwOW9vcHEtNzVzcC00cHJxLW8yNjktbnIzMTQ5MDc0OTQy");
             string decodedString2 = Encoding.UTF8.GetString(data2);
             _reportCrash = new ReportCrash(String.Join("", decodedString.Select(x => char.IsLetter(x) ? (x >= 65 && x <= 77) || (x >= 97 && x <= 109) ? (char)(x + 13) : (char)(x - 13) : x)))
             {
