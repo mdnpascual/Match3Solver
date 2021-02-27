@@ -8,6 +8,7 @@ using System.Windows.Controls;
 
 using Bitmap = System.Drawing.Bitmap;
 using Rectangle = System.Drawing.Rectangle;
+using System.Windows.Media;
 
 namespace Match3Solver
 {
@@ -19,12 +20,14 @@ namespace Match3Solver
         public Boolean hooked = false;
 
         TextBlock message;
+        MainWindow parent;
 
         private Thread sDX = null;
 
-        public GameHook(TextBlock statusMessage)
+        public GameHook(TextBlock statusMessage, MainWindow window)
         {
             this.message = statusMessage;
+            this.parent = window;
         }
 
         public void AttachProcess()
@@ -69,11 +72,12 @@ namespace Match3Solver
 
             if (_captureProcess == null)
             {
-                this.message.Text = "HuniePop 2 Process Not Found!";
+                this.parent.launcHuniePop2Listener();
                 hooked = false;
             }
             else
             {
+                this.message.Foreground = new SolidColorBrush(Colors.DarkGreen);
                 this.message.Text = "Attached to game";
                 hooked = true;
             }

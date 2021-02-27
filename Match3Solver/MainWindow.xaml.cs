@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using CrashReporterDotNET;
 using System.Text;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Match3Solver
 {
@@ -78,10 +79,14 @@ namespace Match3Solver
         private HwndSource _source;
         private static ReportCrash _reportCrash;
 
+        private Thread waitLooper;
+        private Boolean killIt = false;
+
         public MainWindow()
         {
             InitializeComponent();
-            hook = new GameHook(statusText);
+            launcHuniePop2Listener();
+            hook = new GameHook(statusText, this);
             solver = new SolverUtils(length, width, boardDisplay);
             draw = new UIFunctions(this);
             board[0] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -95,6 +100,41 @@ namespace Match3Solver
             results = solver.loopBoard(board);
             initCrashReporter();
 
+        }
+
+        public void launcHuniePop2Listener()
+        {
+            new Thread(() =>
+            {
+
+                while (true)
+                {
+                    
+                    if (Process.GetProcessesByName("HuniePop 2 - Double Date").Length > 0 || killIt)
+                    {
+                        waitLooper = new Thread(() =>
+                        {
+                            Dispatcher.BeginInvoke((Action)(() =>
+                            {
+                                hook.AttachProcess();
+                            }));
+                        });
+                        waitLooper.Start();
+                        break;
+                    }
+                    else
+                    {
+                        Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            statusText.Foreground = new SolidColorBrush(Colors.IndianRed);
+                            statusText.Text = "Waiting for HuniePop2 to Open.";
+                        }));
+                    }
+
+                    Thread.Sleep(50);
+                }
+
+            }).Start();
         }
 
         private static void initCrashReporter()
@@ -267,6 +307,8 @@ namespace Match3Solver
                                 case VK_O:
                                     break;
                                 case VK_I:
+                                    killIt = true;
+                                    Thread.Sleep(200);
                                     hook.AttachProcess();
                                     break;
                                 case VK_C:
@@ -373,7 +415,6 @@ namespace Match3Solver
             selectedIndex = 0;
             resultListView.SelectedIndex = 0;
             resultListView.ScrollIntoView(resultListView.Items.GetItemAt(selectedIndex));
-
         }
 
         private void resultListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
