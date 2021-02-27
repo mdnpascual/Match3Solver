@@ -29,3 +29,7 @@ Known Bugs:
 
 Unknown Bugs:
 - Only Tested on monitors with 16:9 Aspect Ratio (3840x2160, 2560x1440, 1920x1080). Don't know how the gmae behaves on widescreen monitors
+
+Notes when Building from Source:
+Include sharpdx_direct3d11_1_effects_x64.dll in Debug or Release folder. File can be found under Match3Solver\packages\SharpDX.Direct3D11.Effects.4.2.0\runtimes\win7-x64\native
+Then add a suffix of "_x64" at the end
