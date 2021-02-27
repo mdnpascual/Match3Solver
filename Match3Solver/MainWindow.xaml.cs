@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using CrashReporterDotNET;
 using System.Text;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Match3Solver
 {
@@ -21,41 +22,22 @@ namespace Match3Solver
     public partial class MainWindow : Window, SolverInterface
     {
 
-        //0 - Broken heart
-        //1 - Heart
-        //2 - Stamina
-        //3 - Sentiment
-        //4 - Blue
-        //5 - Red
-        //6 - Green
-        //7 - Gold
-        //8 - Bell
-        //9 - Unknown
-        Dictionary<int, Color> myColors = new Dictionary<int, Color>
-        {
-            { 0, Colors.DarkViolet },
-            { 1, Colors.HotPink },
-            { 2, Colors.LightSlateGray },
-            { 3, Colors.Cyan },
-            { 4, Colors.Blue },
-            { 5, Colors.Red },
-            { 6, Colors.Lime },
-            { 7, Colors.Goldenrod },
-            { 8, Colors.Yellow },
-            { 9, Colors.White }
-        };
-
-        int width = 9;
-        int length = 7;
-        int boxSize = 30;
-        int sortingMode = 1;
+        public int width = 9;
+        public int length = 7;
+        public int boxSize = 30;
+        public int sortingMode = 1;
 
         public int[][] board = new int[7][];
         public Rectangle[][] boardDisplay = new Rectangle[7][];
         List<SolverInterface.Movement> results;
         public SolverUtils solver;
         public GameHook hook;
+        public UIFunctions draw;
         public Boolean debugMode = false;
+
+        private int lastScreenHeight = 0;
+        private int lastScreenWidth = 0;
+        private int selectedIndex = 0;
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
@@ -87,16 +69,26 @@ namespace Match3Solver
         private const uint VK_7 = 0x37;
         private const uint VK_8 = 0x38;
         private const uint VK_9 = 0x39;
+        private const uint VK_PLUS = 0xBB;
+        private const uint VK_MINUS = 0xBD;
+        private const uint VK_UP = 0x26;
+        private const uint VK_DOWN = 0x28;
+        private const uint VK_O = 0x4F;
 
         private IntPtr _windowHandle;
         private HwndSource _source;
         private static ReportCrash _reportCrash;
 
+        private Thread waitLooper;
+        private Boolean killIt = false;
+
         public MainWindow()
         {
             InitializeComponent();
-            hook = new GameHook(statusText);
+            launcHuniePop2Listener();
+            hook = new GameHook(statusText, this);
             solver = new SolverUtils(length, width, boardDisplay);
+            draw = new UIFunctions(this);
             board[0] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             board[1] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             board[2] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -104,9 +96,45 @@ namespace Match3Solver
             board[4] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             board[5] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             board[6] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            initBoardDisplay();
+            draw.initBoardDisplay();
             results = solver.loopBoard(board);
             initCrashReporter();
+
+        }
+
+        public void launcHuniePop2Listener()
+        {
+            new Thread(() =>
+            {
+
+                while (true)
+                {
+                    
+                    if (Process.GetProcessesByName("HuniePop 2 - Double Date").Length > 0 || killIt)
+                    {
+                        waitLooper = new Thread(() =>
+                        {
+                            Dispatcher.BeginInvoke((Action)(() =>
+                            {
+                                hook.AttachProcess();
+                            }));
+                        });
+                        waitLooper.Start();
+                        break;
+                    }
+                    else
+                    {
+                        Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            statusText.Foreground = new SolidColorBrush(Colors.IndianRed);
+                            statusText.Text = "Waiting for HuniePop2 to Open.";
+                        }));
+                    }
+
+                    Thread.Sleep(50);
+                }
+
+            }).Start();
         }
 
         private static void initCrashReporter()
@@ -158,18 +186,31 @@ namespace Match3Solver
             _source = HwndSource.FromHwnd(_windowHandle);
             _source.AddHook(HwndHook);
 
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_I)); //CTRL + ALT + I
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_C)); //CTRL + ALT + C
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_1)); //CTRL + ALT + 1
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_2)); //CTRL + ALT + 2
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_3)); //CTRL + ALT + 3
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_4)); //CTRL + ALT + 4
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_5)); //CTRL + ALT + 5
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_6)); //CTRL + ALT + 6
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_7)); //CTRL + ALT + 7
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_8)); //CTRL + ALT + 8
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_9)); //CTRL + ALT + 9
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_0)); //CTRL + ALT + 0
+            String errorString = "";
+
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_I) ? "CTRL + ALT + I, " : ""; //CTRL + ALT + I
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_C) ? "CTRL + ALT + C, " : "";  //CTRL + ALT + C
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_1) ? "CTRL + ALT + 1, " : "";  //CTRL + ALT + 1
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_2) ? "CTRL + ALT + 2, " : "";  //CTRL + ALT + 2
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_3) ? "CTRL + ALT + 3, " : "";  //CTRL + ALT + 3
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_4) ? "CTRL + ALT + 4, " : "";  //CTRL + ALT + 4
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_5) ? "CTRL + ALT + 5, " : "";  //CTRL + ALT + 5
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_6) ? "CTRL + ALT + 6, " : "";  //CTRL + ALT + 6
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_7) ? "CTRL + ALT + 7, " : "";  //CTRL + ALT + 7
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_8) ? "CTRL + ALT + 8, " : "";  //CTRL + ALT + 8
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_9) ? "CTRL + ALT + 9, " : "";  //CTRL + ALT + 9
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_0) ? "CTRL + ALT + 0, " : "";  //CTRL + ALT + 0
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_MINUS) ? "CTRL + ALT + -, " : ""; //CTRL + ALT + -
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_PLUS) ? "CTRL + ALT + +, " : ""; //CTRL + ALT + +
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_UP) ? "CTRL + ALT + UP_ARROW, " : ""; //CTRL + ALT + UP_ARROW
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_DOWN) ? "CTRL + ALT + DOWN_ARROW, " : ""; //CTRL + ALT + DOWN_ARROW
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_O) ? "CTRL + ALT + O, " : ""; //CTRL + ALT + O
+
+            if (!errorString.Equals(""))
+            {
+                MessageBox.Show("Cannot Bind Key Combinations: " + errorString.Remove(errorString.Length - 2), "BIND ERROR");
+            }
+
         }
 
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -185,56 +226,89 @@ namespace Match3Solver
                             switch ((uint)vkey)
                             {
                                 case VK_0:
-                                    sortingMode = 0;
-                                    highLightMode("0 - Broken Heart First", rightTextBox, leftTextBox);
+                                    sortingMode = 10;
+                                    draw.highLightMode("0 - Red First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_1:
                                     sortingMode = 1;
-                                    highLightMode("1 - Chain First", leftTextBox, rightTextBox);
+                                    draw.highLightMode("1 - Chain First", leftTextBox, rightTextBox);
                                     updateResultView(results);
+                                    resultListView.SelectedIndex = 0;
                                     break;
                                 case VK_2:
                                     sortingMode = 2;
-                                    highLightMode("2 - TotalWB First", leftTextBox, rightTextBox);
+                                    draw.highLightMode("2 - TotalWB First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_3:
                                     sortingMode = 3;
-                                    highLightMode("3 - Heart First", leftTextBox, rightTextBox);
+                                    draw.highLightMode("3 - 4/5 Match First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_4:
                                     sortingMode = 4;
-                                    highLightMode("4 - Joy First", leftTextBox, rightTextBox);
+                                    draw.highLightMode("4 - Heart First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_5:
                                     sortingMode = 5;
-                                    highLightMode("5 - Sentiment First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("5 - Joy First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_6:
                                     sortingMode = 6;
-                                    highLightMode("6 - Blue First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("6 - Sentiment First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_7:
                                     sortingMode = 7;
-                                    highLightMode("7 - Green First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("7 - Blue First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_8:
                                     sortingMode = 8;
-                                    highLightMode("8 - Orange First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("8 - Green First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_9:
                                     sortingMode = 9;
-                                    highLightMode("9 - Red First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("9 - Orange First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
+                                case VK_MINUS:
+                                    sortingMode = 11;
+                                    draw.highLightMode("- - Stamina First", rightTextBox, leftTextBox);
+                                    updateResultView(results);
+                                    break;
+                                case VK_PLUS:
+                                    sortingMode = 12;
+                                    draw.highLightMode("+ - Broken Heart First", rightTextBox, leftTextBox);
+                                    updateResultView(results);
+                                    break;
+                                case VK_UP:
+                                    if(this.selectedIndex > 0)
+                                    {
+                                        this.selectedIndex--;
+                                        resultListView.SelectedIndex = this.selectedIndex;
+                                        resultListView.ScrollIntoView(resultListView.Items.GetItemAt(this.selectedIndex));
+                                        hook.drawOverlay(draw.parseMovementAndDraw(results[this.selectedIndex], board[results[this.selectedIndex].yPos][results[this.selectedIndex].xPos], lastScreenHeight, lastScreenWidth));
+                                    }
+                                    break;
+                                case VK_DOWN:
+                                    if(this.selectedIndex < results.Count - 1)
+                                    {
+                                        this.selectedIndex++;
+                                        resultListView.SelectedIndex = this.selectedIndex;
+                                        resultListView.ScrollIntoView(resultListView.Items.GetItemAt(this.selectedIndex));
+                                        hook.drawOverlay(draw.parseMovementAndDraw(results[this.selectedIndex], board[results[this.selectedIndex].yPos][results[this.selectedIndex].xPos], lastScreenHeight, lastScreenWidth));
+                                    }
+                                    break;
+                                case VK_O:
+                                    break;
                                 case VK_I:
+                                    killIt = true;
+                                    Thread.Sleep(200);
                                     hook.AttachProcess();
                                     break;
                                 case VK_C:
@@ -242,10 +316,12 @@ namespace Match3Solver
                                     new Thread(() =>
                                     {
                                         System.Drawing.Bitmap screenshot = debugMode ? new System.Drawing.Bitmap(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "\\debug.png") : captureBoard();
-                                        if(screenshot == null)
+                                        if (screenshot == null)
                                         {
                                             return;
                                         }
+                                        lastScreenHeight = screenshot.Height;
+                                        lastScreenWidth = screenshot.Width;
                                         board = solver.parseImage(screenshot);
                                         screenshot.Dispose();
                                         GC.Collect();
@@ -271,8 +347,8 @@ namespace Match3Solver
                                             {
                                                 Dispatcher.BeginInvoke((Action)(() =>
                                                 {
-                                                    updateResultView(results);
-                                                    drawBoard(board);
+                                                    updateResultView(results, lastScreenHeight, lastScreenWidth);
+                                                    draw.drawBoard(board);
 
                                                     statusText.Foreground = new SolidColorBrush(Colors.LimeGreen);
                                                     statusText.Text = "Done!";
@@ -294,62 +370,11 @@ namespace Match3Solver
             return IntPtr.Zero;
         }
 
-        private void highLightMode(String toSearch, RichTextBox rtb, RichTextBox other)
-        {
-            // RESET OTHER RICH TEXT BOX
-            TextRange text2 = new TextRange(other.Document.ContentStart, other.Document.ContentEnd);
-            text2.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
-            text2.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-
-            // RESET CURRENT RICH TEXT BOX
-            TextRange text = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
-            TextPointer current = text.Start.GetInsertionPosition(LogicalDirection.Forward);
-            text.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
-            text.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-
-            while (current != null)
-            {
-                string textInRun = current.GetTextInRun(LogicalDirection.Forward);
-                if (!string.IsNullOrWhiteSpace(textInRun))
-                {
-                    int index = textInRun.IndexOf(toSearch);
-                    if (index != -1)
-                    {
-                        TextPointer selectionStart = current.GetPositionAtOffset(index, LogicalDirection.Forward);
-                        TextPointer selectionEnd = selectionStart.GetPositionAtOffset(toSearch.Length, LogicalDirection.Forward);
-                        TextRange selection = new TextRange(selectionStart, selectionEnd);
-                        selection.Text = toSearch;
-                        selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
-                        selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
-                        rtb.Selection.Select(selection.Start, selection.End);
-                        rtb.Focus();
-                    }
-                }
-                current = current.GetNextContextPosition(LogicalDirection.Forward);
-            }
-        }
-
         protected override void OnClosed(EventArgs e)
         {
             _source.RemoveHook(HwndHook);
             UnregisterHotKey(_windowHandle, HOTKEY_ID);
             base.OnClosed(e);
-        }
-
-        private IntPtr findHuniePopWindow()
-        {
-            IntPtr targetWindow = FindWindow(null, "HuniePop 2 - Double Date");
-            if (targetWindow == IntPtr.Zero)
-            {
-                statusText.Foreground = new SolidColorBrush(Colors.Red);
-                statusText.Text = "Game not Found!";
-            }
-            else
-            {
-                statusText.Foreground = new SolidColorBrush(Colors.Green);
-                statusText.Text = "Injected to Game";
-            }
-            return targetWindow;
         }
 
         private System.Drawing.Bitmap captureBoard()
@@ -378,92 +403,26 @@ namespace Match3Solver
 
         private void updateResultView(List<SolverInterface.Movement> results)
         {
+            updateResultView(results, lastScreenHeight, lastScreenWidth);
+        }
+
+        private void updateResultView(List<SolverInterface.Movement> incomingList, int height, int width)
+        {
             resultListView.Items.Clear();
             
-            results = solver.sortList(results, sortingMode);
+            results = solver.sortList(incomingList, sortingMode);
+            hook.drawOverlay(draw.parseMovementAndDraw(results[0], board[results[0].yPos][results[0].xPos], height, width));
             results.ForEach(result =>
             {
                 resultListView.Items.Add(new resultItem(result));
             });
-
-        }
-
-        private void drawBoard(int[][] board)
-        {
-            int x = 0;
-            int y = 0;
-            while (y < length)
-            {
-                x = 0;
-                while (x < width)
-                {
-                    boardDisplay[y][x].Fill = new SolidColorBrush(myColors[board[y][x] % 10]);
-                    x++;
-                }
-                y++;
-            }
-        }
-
-        private void initBoardDisplay()
-        {
-            int xPos = 10;
-            int yPos = 10;
-            int x = 0;
-            int y = 0;
-
-            while(y < length)
-            {
-                boardDisplay[y] = new Rectangle[width];
-                xPos = 10;
-                x = 0;
-                while(x < width)
-                {
-                    boardDisplay[y][x] = createRectangle(xPos, yPos, myColors[board[y][x] % 10]);
-                    mainGrid.Children.Add(boardDisplay[y][x]);
-                    xPos += boxSize;
-                    x++;
-                }
-                yPos += boxSize;
-                y++;
-            }
-        }
-
-        private Rectangle createRectangle(int xPos, int yPos, Color color)
-        {
-            Rectangle rect = new Rectangle();
-            rect.Fill = new SolidColorBrush(color);
-            
-            rect.VerticalAlignment = VerticalAlignment.Top;
-            rect.HorizontalAlignment = HorizontalAlignment.Left;
-
-            rect.Margin = new Thickness(xPos, yPos, 0, 0);
-            rect.Stroke = new SolidColorBrush(Colors.Black);
-
-            rect.Height = boxSize;
-            rect.Width = boxSize;
-
-            return rect;
+            selectedIndex = 0;
+            resultListView.SelectedIndex = 0;
+            resultListView.ScrollIntoView(resultListView.Items.GetItemAt(selectedIndex));
         }
 
         private void resultListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // DEEP COPY
-            int[][] board2Test = Array.ConvertAll(board, a => (int[])a.Clone());
-            resultItem selectedItem = (resultItem)e.AddedItems[0];
-            if (selectedItem.isVertical)
-            {
-                board2Test = solver.moveVertical(selectedItem.yPos, selectedItem.xPos, selectedItem.Amount, board2Test);
-            }
-            else
-            {
-                board2Test = solver.moveHorizontal(selectedItem.yPos, selectedItem.xPos, selectedItem.Amount, board2Test);
-            }
-            drawBoard(board2Test);
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            hook.AttachProcess();
         }
     }
 }

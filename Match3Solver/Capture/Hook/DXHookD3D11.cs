@@ -545,6 +545,7 @@ namespace Capture.Hook
 
                 #region Draw overlay (after screenshot so we don't capture overlay as well)
                 var displayOverlays = Overlays;
+
                 if (this.Config.ShowOverlay && displayOverlays != null)
                 {
                     // Initialise Overlay Engine
@@ -553,7 +554,6 @@ namespace Capture.Hook
                     {
                         if (_overlayEngine != null)
                             _overlayEngine.Dispose();
-
                         _overlayEngine = new DX11.DXOverlayEngine();
                         _overlayEngine.Overlays.AddRange((IEnumerable<IOverlay>)displayOverlays);
                         _overlayEngine.Initialise(swapChain);

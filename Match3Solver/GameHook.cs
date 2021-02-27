@@ -1,16 +1,14 @@
 ﻿using Capture.Hook;
 using Capture;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
-using System.IO;
 using Capture.Interface;
 using System.Threading;
 using System.Windows.Controls;
-using System.Drawing;
+
+using Bitmap = System.Drawing.Bitmap;
+using Rectangle = System.Drawing.Rectangle;
+using System.Windows.Media;
 
 namespace Match3Solver
 {
@@ -22,16 +20,21 @@ namespace Match3Solver
         public Boolean hooked = false;
 
         TextBlock message;
+        MainWindow parent;
 
-        public GameHook(TextBlock statusMessage)
+        private Thread sDX = null;
+
+        public GameHook(TextBlock statusMessage, MainWindow window)
         {
             this.message = statusMessage;
+            this.parent = window;
         }
 
         public void AttachProcess()
         {
 
             Process[] processes = Process.GetProcessesByName("HuniePop 2 - Double Date");
+
             foreach (Process process in processes)
             {
                 // Simply attach to the first one found.
@@ -53,7 +56,7 @@ namespace Match3Solver
                 CaptureConfig cc = new CaptureConfig()
                 {
                     Direct3DVersion = direct3DVersion,
-                    ShowOverlay = false
+                    ShowOverlay = true
                 };
 
                 processId = process.Id;
@@ -69,20 +72,30 @@ namespace Match3Solver
 
             if (_captureProcess == null)
             {
-                this.message.Text = "No executable found matching: 'HuniePop 2 - Double Date'";
+                this.parent.launcHuniePop2Listener();
                 hooked = false;
             }
             else
             {
+                this.message.Foreground = new SolidColorBrush(Colors.DarkGreen);
                 this.message.Text = "Attached to game";
                 hooked = true;
             }
+
         }
 
         public Bitmap getScreenshot()
         {
             _captureProcess.BringProcessWindowToFront();
             return _captureProcess.CaptureInterface.GetScreenshot(Rectangle.Empty, new TimeSpan(0,0,3), null, ImageFormat.Png).ToBitmap();
+        }
+
+        public void drawOverlay(Capture.Hook.Common.Overlay items)
+        {
+            if (hooked)
+            {
+                _captureProcess.CaptureInterface.DrawOverlayInGame(items);
+            }
         }
 
         /// <summary>
@@ -93,5 +106,6 @@ namespace Match3Solver
         {
             Console.WriteLine(message.Message);
         }
+
     }
 }

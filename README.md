@@ -6,8 +6,9 @@
 Match 3 Solver for HuniePop2
 
 Features:
-- Injects to the game to be able to screenshot the board state
+- Automatically Injects to the game to be able to screenshot the board state
 - Parses and Solve the board state.
+- Draw Movements on top of the game
 - Various sort modes for results
 
 Usage:
@@ -23,12 +24,8 @@ Video Demo on how to Use and Read the results:
 
 [<img src="https://j.gifs.com/lxzokr.gif">](https://youtu.be/nof1xo_q4ws)
 
-Features to be considered:
-- Results in overlay
-
 Known Bugs:
 - Random Game crash when alt-tabing
-- Error 15 when trying to inject the solver to the game
 
 Unknown Bugs:
 - Only Tested on monitors with 16:9 Aspect Ratio (3840x2160, 2560x1440, 1920x1080). Don't know how the gmae behaves on widescreen monitors

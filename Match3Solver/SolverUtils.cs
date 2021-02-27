@@ -432,7 +432,7 @@ namespace Match3Solver
             try
             {
 
-                // CENTER = 1200X35 ON 3840X21560
+                // CENTER = 1200X35 ON 3840X2160
                 // PIXEL TO CHECK 1227X364 ON 3840X2160
                 int startX = (int)(sizeWidth * 0.3195);
                 int startY = (int)(sizeLength * 0.1685);
@@ -444,7 +444,7 @@ namespace Match3Solver
                 {
                     x = 0;
                     board[y] = new int[width];
-                    startX = (int)(sizeWidth * 0.3125);
+                    startX = (int)(sizeWidth * 0.3125); // 3125?
                     while (x < width)
                     {
                         byte[] rgb = getPixel(startX, startY, sizeWidth, bitmapData);
@@ -504,14 +504,16 @@ namespace Match3Solver
         /// <summary>
         /// 1 - Cascade First
         /// 2 - TotalWB First
-        /// 3 - Heart First
-        /// 4 - Joy First
-        /// 5 - Sentiment First
-        /// 6 - Blue First
-        /// 7 - Green First
-        /// 8 - Orange First
-        /// 9 - Red First
-        /// 0 - Broken Heart First
+        /// 3 - 4/5 First
+        /// 4 - Heart First
+        /// 5 - Joy First
+        /// 6 - Sentiment First
+        /// 7 - Blue First
+        /// 8 - Green First
+        /// 9 - Orange First
+        /// 10 - Red First
+        /// 11 - Stamina First
+        /// 12 - Broken Heart First
         /// </summary>
         /// <param name="results"></param>
         /// <param name="sortingMode"></param>
@@ -522,37 +524,65 @@ namespace Match3Solver
             {
                 case 1:
                     return results.OrderByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.getTotal()).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 case 2:
                     return results.OrderByDescending(elem => elem.score.getTotal()).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
                 case 3:
-                    return results.OrderByDescending(elem => elem.score.Heart).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
+                    return results.OrderByDescending(elem => elem.score.getTotal(), new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
                 case 4:
-                    return results.OrderByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
+                    return results.OrderByDescending(elem => elem.score.Heart, new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
                 case 5:
-                    return results.OrderByDescending(elem => elem.score.Sentiment).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
+                    return results.OrderByDescending(elem => elem.score.Bell, new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
                 case 6:
-                    return results.OrderByDescending(elem => elem.score.Blue).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
+                    return results.OrderByDescending(elem => elem.score.Sentiment, new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
                 case 7:
-                    return results.OrderByDescending(elem => elem.score.Green).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
+                    return results.OrderByDescending(elem => elem.score.Blue, new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
                 case 8:
-                    return results.OrderByDescending(elem => elem.score.Gold).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
+                    return results.OrderByDescending(elem => elem.score.Green, new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
                 case 9:
-                    return results.OrderByDescending(elem => elem.score.Red).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
-                case 0:
-                    return results.OrderByDescending(elem => elem.score.BrokenHeart).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
-                    break;
+                    return results.OrderByDescending(elem => elem.score.Gold, new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                case 10:
+                    return results.OrderByDescending(elem => elem.score.Red, new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                case 11:
+                    return results.OrderByDescending(elem => elem.score.Stamina, new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                case 12:
+                    return results.OrderByDescending(elem => elem.score.BrokenHeart, new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
                 default:
                     return results;
-                    break;
+            }
+        }
+
+        /// <summary>
+        /// PRIORITIZES SCORE, DIVISIBLE BY 5 > DIVIDIBLE BY 4 > THEN NORMAL SORT
+        /// </summary>
+        class customCompare : IComparer<int>
+        {
+            public int Compare(int x, int y)
+            {
+                // EQUAL?
+                if (x == y)
+                {
+                    return 0;
+                }
+
+                if (x == 0) return -1;
+                if (y == 0) return 1;
+
+                if((x % 5 == 0) && (y % 5 == 0) || (x % 4 == 0) && (y % 4 == 0))
+                {
+                    return (x > y) ? 1 : -1;
+                }
+
+                Boolean xMod5 = (x % 5 == 0);
+                Boolean yMod5 = (y % 5 == 0);
+                Boolean xMod4 = (x % 4 == 0);
+                Boolean yMod4 = (y % 4 == 0);
+
+                if (xMod5) return 1;
+                if (yMod5) return -1;
+                if (xMod4) return 1;
+                if (yMod4) return -1;
+
+                return Comparer<int>.Default.Compare(x, y);
             }
         }
 
