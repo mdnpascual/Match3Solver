@@ -372,6 +372,7 @@ namespace Match3Solver
             });
             selectedIndex = 0;
             resultListView.SelectedIndex = 0;
+            resultListView.ScrollIntoView(resultListView.Items.GetItemAt(selectedIndex));
 
         }
 

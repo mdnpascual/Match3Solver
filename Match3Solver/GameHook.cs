@@ -69,7 +69,7 @@ namespace Match3Solver
 
             if (_captureProcess == null)
             {
-                this.message.Text = "No executable found matching: 'HuniePop 2 - Double Date'";
+                this.message.Text = "HuniePop 2 Process Not Found!";
                 hooked = false;
             }
             else
