@@ -36,6 +36,7 @@ namespace Match3Solver
 
         private int lastScreenHeight = 0;
         private int lastScreenWidth = 0;
+        private int selectedIndex = 0;
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
@@ -69,6 +70,9 @@ namespace Match3Solver
         private const uint VK_9 = 0x39;
         private const uint VK_PLUS = 0xBB;
         private const uint VK_MINUS = 0xBD;
+        private const uint VK_UP = 0x26;
+        private const uint VK_DOWN = 0x28;
+        private const uint VK_O = 0x4F;
 
         private IntPtr _windowHandle;
         private HwndSource _source;
@@ -158,6 +162,9 @@ namespace Match3Solver
             errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_0) ? "CTRL + ALT + 0, " : "";  //CTRL + ALT + 0
             errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_MINUS) ? "CTRL + ALT + -, " : ""; //CTRL + ALT + -
             errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_PLUS) ? "CTRL + ALT + +, " : ""; //CTRL + ALT + +
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_UP) ? "CTRL + ALT + UP_ARROW, " : ""; //CTRL + ALT + UP_ARROW
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_DOWN) ? "CTRL + ALT + DOWN_ARROW, " : ""; //CTRL + ALT + DOWN_ARROW
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_O) ? "CTRL + ALT + O, " : ""; //CTRL + ALT + O
 
             if (!errorString.Equals(""))
             {
@@ -187,6 +194,7 @@ namespace Match3Solver
                                     sortingMode = 1;
                                     draw.highLightMode("1 - Chain First", leftTextBox, rightTextBox);
                                     updateResultView(results);
+                                    resultListView.SelectedIndex = 0;
                                     break;
                                 case VK_2:
                                     sortingMode = 2;
@@ -237,6 +245,26 @@ namespace Match3Solver
                                     sortingMode = 12;
                                     draw.highLightMode("+ - Broken Heart First", rightTextBox, leftTextBox);
                                     updateResultView(results);
+                                    break;
+                                case VK_UP:
+                                    if(this.selectedIndex > 0)
+                                    {
+                                        this.selectedIndex--;
+                                        resultListView.SelectedIndex = this.selectedIndex;
+                                        resultListView.ScrollIntoView(resultListView.Items.GetItemAt(this.selectedIndex));
+                                        hook.drawOverlay(draw.parseMovementAndDraw(results[this.selectedIndex], board[results[this.selectedIndex].yPos][results[this.selectedIndex].xPos], lastScreenHeight, lastScreenWidth));
+                                    }
+                                    break;
+                                case VK_DOWN:
+                                    if(this.selectedIndex < results.Count - 1)
+                                    {
+                                        this.selectedIndex++;
+                                        resultListView.SelectedIndex = this.selectedIndex;
+                                        resultListView.ScrollIntoView(resultListView.Items.GetItemAt(this.selectedIndex));
+                                        hook.drawOverlay(draw.parseMovementAndDraw(results[this.selectedIndex], board[results[this.selectedIndex].yPos][results[this.selectedIndex].xPos], lastScreenHeight, lastScreenWidth));
+                                    }
+                                    break;
+                                case VK_O:
                                     break;
                                 case VK_I:
                                     hook.AttachProcess();
@@ -332,16 +360,18 @@ namespace Match3Solver
             updateResultView(results, lastScreenHeight, lastScreenWidth);
         }
 
-        private void updateResultView(List<SolverInterface.Movement> results, int height, int width)
+        private void updateResultView(List<SolverInterface.Movement> incomingList, int height, int width)
         {
             resultListView.Items.Clear();
             
-            results = solver.sortList(results, sortingMode);
-            hook.drawOverlay(draw.parseMovementAndDraw(results[0], height, width));
+            results = solver.sortList(incomingList, sortingMode);
+            hook.drawOverlay(draw.parseMovementAndDraw(results[0], board[results[0].yPos][results[0].xPos], height, width));
             results.ForEach(result =>
             {
                 resultListView.Items.Add(new resultItem(result));
             });
+            selectedIndex = 0;
+            resultListView.SelectedIndex = 0;
 
         }
 

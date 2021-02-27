@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Match3Solver"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="1008.872">
+        Title="MainWindow" Height="471.778" Width="1008.872">
     <Window.Resources>
         <local:CutoffConverter x:Key="ValueConverter" Cutoff="00" />
         <!--STYLES-->
@@ -232,7 +232,7 @@
             <ColumnDefinition Width="811*"/>
             <ColumnDefinition Width="126*"/>
         </Grid.ColumnDefinitions>
-        <ListView x:Name="resultListView" Margin="300,10,11.666,9.667" SelectionChanged="resultListView_SelectionChanged" Grid.ColumnSpan="2">
+        <ListView x:Name="resultListView" Margin="300,10,11.666,9.667" SelectionChanged="resultListView_SelectionChanged" Grid.ColumnSpan="2" IsEnabled="False">
             <ListView.View>
                 <GridView x:Name="resultGridView">
                     <GridViewColumn Header="Pos(Y,X)" CellTemplate="{StaticResource PositionCell}" />

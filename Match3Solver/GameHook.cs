@@ -88,7 +88,10 @@ namespace Match3Solver
 
         public void drawOverlay(Capture.Hook.Common.Overlay items)
         {
-            _captureProcess.CaptureInterface.DrawOverlayInGame(items);
+            if (hooked)
+            {
+                _captureProcess.CaptureInterface.DrawOverlayInGame(items);
+            }
         }
 
         /// <summary>
