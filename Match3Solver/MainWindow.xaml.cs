@@ -67,6 +67,8 @@ namespace Match3Solver
         private const uint VK_7 = 0x37;
         private const uint VK_8 = 0x38;
         private const uint VK_9 = 0x39;
+        private const uint VK_PLUS = 0xBB;
+        private const uint VK_MINUS = 0xBD;
 
         private IntPtr _windowHandle;
         private HwndSource _source;
@@ -140,18 +142,28 @@ namespace Match3Solver
             _source = HwndSource.FromHwnd(_windowHandle);
             _source.AddHook(HwndHook);
 
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_I)); //CTRL + ALT + I
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_C)); //CTRL + ALT + C
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_1)); //CTRL + ALT + 1
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_2)); //CTRL + ALT + 2
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_3)); //CTRL + ALT + 3
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_4)); //CTRL + ALT + 4
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_5)); //CTRL + ALT + 5
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_6)); //CTRL + ALT + 6
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_7)); //CTRL + ALT + 7
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_8)); //CTRL + ALT + 8
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_9)); //CTRL + ALT + 9
-            Console.WriteLine(RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_0)); //CTRL + ALT + 0
+            String errorString = "";
+
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_I) ? "CTRL + ALT + I, " : ""; //CTRL + ALT + I
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_C) ? "CTRL + ALT + C, " : "";  //CTRL + ALT + C
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_1) ? "CTRL + ALT + 1, " : "";  //CTRL + ALT + 1
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_2) ? "CTRL + ALT + 2, " : "";  //CTRL + ALT + 2
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_3) ? "CTRL + ALT + 3, " : "";  //CTRL + ALT + 3
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_4) ? "CTRL + ALT + 4, " : "";  //CTRL + ALT + 4
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_5) ? "CTRL + ALT + 5, " : "";  //CTRL + ALT + 5
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_6) ? "CTRL + ALT + 6, " : "";  //CTRL + ALT + 6
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_7) ? "CTRL + ALT + 7, " : "";  //CTRL + ALT + 7
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_8) ? "CTRL + ALT + 8, " : "";  //CTRL + ALT + 8
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_9) ? "CTRL + ALT + 9, " : "";  //CTRL + ALT + 9
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_0) ? "CTRL + ALT + 0, " : "";  //CTRL + ALT + 0
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_MINUS) ? "CTRL + ALT + -, " : ""; //CTRL + ALT + -
+            errorString += !RegisterHotKey(_windowHandle, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_PLUS) ? "CTRL + ALT + +, " : ""; //CTRL + ALT + +
+
+            if (!errorString.Equals(""))
+            {
+                MessageBox.Show("Cannot Bind Key Combinations: " + errorString.Remove(errorString.Length - 2), "BIND ERROR");
+            }
+
         }
 
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -167,8 +179,8 @@ namespace Match3Solver
                             switch ((uint)vkey)
                             {
                                 case VK_0:
-                                    sortingMode = 0;
-                                    draw.highLightMode("0 - Broken Heart First", rightTextBox, leftTextBox);
+                                    sortingMode = 10;
+                                    draw.highLightMode("0 - Red First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_1:
@@ -183,37 +195,47 @@ namespace Match3Solver
                                     break;
                                 case VK_3:
                                     sortingMode = 3;
-                                    draw.highLightMode("3 - Heart First", leftTextBox, rightTextBox);
+                                    draw.highLightMode("3 - 4/5 Match First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_4:
                                     sortingMode = 4;
-                                    draw.highLightMode("4 - Joy First", leftTextBox, rightTextBox);
+                                    draw.highLightMode("4 - Heart First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_5:
                                     sortingMode = 5;
-                                    draw.highLightMode("5 - Sentiment First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("5 - Joy First", leftTextBox, rightTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_6:
                                     sortingMode = 6;
-                                    draw.highLightMode("6 - Blue First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("6 - Sentiment First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_7:
                                     sortingMode = 7;
-                                    draw.highLightMode("7 - Green First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("7 - Blue First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_8:
                                     sortingMode = 8;
-                                    draw.highLightMode("8 - Orange First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("8 - Green First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_9:
                                     sortingMode = 9;
-                                    draw.highLightMode("9 - Red First", rightTextBox, leftTextBox);
+                                    draw.highLightMode("9 - Orange First", rightTextBox, leftTextBox);
+                                    updateResultView(results);
+                                    break;
+                                case VK_MINUS:
+                                    sortingMode = 11;
+                                    draw.highLightMode("- - Stamina First", rightTextBox, leftTextBox);
+                                    updateResultView(results);
+                                    break;
+                                case VK_PLUS:
+                                    sortingMode = 12;
+                                    draw.highLightMode("+ - Broken Heart First", rightTextBox, leftTextBox);
                                     updateResultView(results);
                                     break;
                                 case VK_I:
@@ -325,23 +347,6 @@ namespace Match3Solver
 
         private void resultListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // DEEP COPY
-            int[][] board2Test = Array.ConvertAll(board, a => (int[])a.Clone());
-            resultItem selectedItem = (resultItem)e.AddedItems[0];
-            if (selectedItem.isVertical)
-            {
-                board2Test = solver.moveVertical(selectedItem.yPos, selectedItem.xPos, selectedItem.Amount, board2Test);
-            }
-            else
-            {
-                board2Test = solver.moveHorizontal(selectedItem.yPos, selectedItem.xPos, selectedItem.Amount, board2Test);
-            }
-            draw.drawBoard(board2Test);
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            hook.AttachProcess();
         }
     }
 }
