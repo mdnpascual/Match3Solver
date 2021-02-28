@@ -545,7 +545,7 @@ namespace Match3Solver
                 case 11:
                     return results.OrderByDescending(elem => elem.score.Stamina, new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
                 case 12:
-                    return results.OrderByDescending(elem => elem.score.BrokenHeart, new customCompare()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
+                    return results.OrderByDescending(elem => elem.score.BrokenHeart, new customCompareBroken()).ThenByDescending(elem => elem.score.chains).ThenByDescending(elem => elem.score.staminaCost).ThenByDescending(elem => elem.score.Bell).ThenByDescending(elem => elem.score.Heart).ToList();
                 default:
                     return results;
             }
@@ -558,6 +558,55 @@ namespace Match3Solver
         {
             public int Compare(int x, int y)
             {
+
+                // EQUAL?
+                if (x == y)
+                {
+                    return 0;
+                }
+
+                // NEGATIVES
+                if(x < 0 && y < 0)
+                {
+                    return Comparer<int>.Default.Compare(x, y);
+                }else if(x < 0)
+                {
+                    return -1;
+                }else if(y < 0)
+                {
+                    return 1;
+                }
+
+                if (x == 0) return -1;
+                if (y == 0) return 1;
+
+                if((x % 5 == 0) && (y % 5 == 0) || (x % 4 == 0) && (y % 4 == 0))
+                {
+                    return (x > y) ? 1 : -1;
+                }
+
+                Boolean xMod5 = (x % 5 == 0);
+                Boolean yMod5 = (y % 5 == 0);
+                Boolean xMod4 = (x % 4 == 0);
+                Boolean yMod4 = (y % 4 == 0);
+
+                if (xMod5) return 1;
+                if (yMod5) return -1;
+                if (xMod4) return 1;
+                if (yMod4) return -1;
+
+                return Comparer<int>.Default.Compare(x, y);
+            }
+        }
+
+        /// <summary>
+        /// PRIORITIZES SCORE, DIVISIBLE BY 5 > DIVIDIBLE BY 4 > THEN NORMAL SORT
+        /// </summary>
+        class customCompareBroken : IComparer<int>
+        {
+            public int Compare(int x, int y)
+            {
+
                 // EQUAL?
                 if (x == y)
                 {
@@ -567,7 +616,7 @@ namespace Match3Solver
                 if (x == 0) return -1;
                 if (y == 0) return 1;
 
-                if((x % 5 == 0) && (y % 5 == 0) || (x % 4 == 0) && (y % 4 == 0))
+                if ((x % 5 == 0) && (y % 5 == 0) || (x % 4 == 0) && (y % 4 == 0))
                 {
                     return (x > y) ? 1 : -1;
                 }

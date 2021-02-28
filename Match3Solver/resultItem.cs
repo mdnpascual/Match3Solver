@@ -48,7 +48,7 @@ namespace Match3Solver
             StaminaCost = input.score.staminaCost;
             Chain = input.score.chains;
             Total = input.score.getTotal();
-            TotalWBroken = input.score.getTotal() - (2 * input.score.BrokenHeart);
+            TotalWBroken = input.score.getTotalNoBroken() - (2 * input.score.BrokenHeart);
         }
 
         private string getDirection(SolverInterface.Movement input)

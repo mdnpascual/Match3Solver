@@ -91,6 +91,11 @@ namespace Match3Solver
             {
                 return this.Heart + this.Stamina + this.Sentiment + this.Blue + this.Red + this.Green + this.Gold + this.Bell - this.BrokenHeart;
             }
+
+            public int getTotalNoBroken()
+            {
+                return this.Heart + this.Stamina + this.Sentiment + this.Blue + this.Red + this.Green + this.Gold + this.Bell;
+            }
         }
 
         public struct Movement
