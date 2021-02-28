@@ -17,10 +17,9 @@ Usage:
 3) Extract the zip BUT DO NOT PUT IT ON THE SAME FOLDER WHERE HUNIEPOP2 is located
 4) Run Match3Solver.exe. (It won't run if you Click no when asking for Admin Access)
 5) Run huniepop
-6) Press Ctrl + Alt + I to Inject
-7) Press Ctrl + Alt + C to capture board state and solve.
+6) Press Ctrl + Alt + C to capture board state and solve.
 
-Video Demo on how to Use and Read the results:
+Video Demo on How to Use:
 
 [<img src="https://j.gifs.com/1W2gDG.gif">](https://youtu.be/xW7D1d0Jp6c)https://www.youtube.com/watch?v=xW7D1d0Jp6c
 
