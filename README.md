@@ -12,7 +12,7 @@ Features:
 - Various sort modes for results
 
 Usage:
-1) Download the Zip
+1) [Download the Zip](https://github.com/mdnpascual/Match3Solver/releases)
 2) Right click the Zip >> Properties >> Tick Unblock and Click Apply
 3) Extract the zip BUT DO NOT PUT IT ON THE SAME FOLDER WHERE HUNIEPOP2 is located
 4) Run Match3Solver.exe. (It won't run if you Click no when asking for Admin Access)
